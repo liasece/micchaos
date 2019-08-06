@@ -7,14 +7,14 @@ COMM_PATH=./comm/
 EXCELJSON_PATH = ./exceljson 
 CEHUA_SVNURL = https://192.168.150.238/svn/GiantCode/wxcat/cehua/$(USER)/
 
-SUB_DIRS = ./
+SUB_DIRS = ./chaos
 
 all: debug 
 
 debug:
 	@cd github.com/liasece/micserver/tools && ./makeservermsg.sh
 	@echo GOPATH:$(GOPATH)
-	@go install -gcflags "-N -l"  || exit 1; 
+	@go install -gcflags "-N -l" $(SUB_DIRS) || exit 1; 
 	@echo Done
 
 proto:
