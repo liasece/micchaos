@@ -1,14 +1,18 @@
 package main
 
 import (
+	"fmt"
+	"os"
+	"path/filepath"
+	"sync"
+
 	"gatemodule"
+	"playermodule"
+
 	"github.com/liasece/micserver/conf"
 	"github.com/liasece/micserver/log"
 	"github.com/liasece/micserver/module"
 	"github.com/liasece/micserver/util"
-	"os"
-	"path/filepath"
-	"sync"
 )
 
 type InitManager struct {
@@ -38,6 +42,10 @@ func (this *InitManager) GetProgramModuleList() []module.IModule {
 		this.modules = make(map[string]module.IModule)
 		config := conf.TopConfig{}
 		config.InitParse()
+		logpath := config.GetProp("logpath")
+		if logpath != "" {
+			log.AddLogFile(filepath.Join(logpath, "app.log"), true)
+		}
 		isDevelopment := true
 
 		// 遍历所有的参数指定的模块名
@@ -52,6 +60,14 @@ func (this *InitManager) GetProgramModuleList() []module.IModule {
 						ModuleID: pid,
 					},
 				})
+			case "player":
+				this.addModule(&playermodule.PlayerModule{
+					BaseModule: module.BaseModule{
+						ModuleID: pid,
+					},
+				})
+			default:
+				panic(fmt.Sprintf("无法解析的模块 %s:%s", stype, pid))
 			}
 		}
 

@@ -74,6 +74,11 @@
 					"subnettcpaddr":":20001",
 					"gatetcpaddr":":20002"
 				}
+			},
+			"player001":{
+				"settings":{
+					"subnettcpaddr":":13001"
+				}
 			}
 		}
 	}
