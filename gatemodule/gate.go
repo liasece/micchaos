@@ -1,4 +1,4 @@
-package gate
+package gatemodule
 
 import (
 	"command"
