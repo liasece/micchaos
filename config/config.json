@@ -1,0 +1,80 @@
+{
+	"//":"app 的配置会被 App 读取，你应该在这之中配置 App 强相关的内容，不应跟你的业务挂钩。",
+	"app":{
+		"//":"app 全局配置。如果 module 的配置中没有对应配置项，会读取 app.settings 的内容。",
+		"//":"配置的优先级为: module > app。",
+		"settings":{
+			"//logpath":"/home/jansen/logs/",
+			"//":"isdaemon 用来告诉日志系统你是否需要在控制台显示log内容。",
+			"//":"如果你希望直接在终端运行并且希望日志显示在终端上，isdaemon 应为 false",
+			"//isdaemon":"true",
+			"msgthreadnum":"12"
+		},
+		"modules":{
+			"gate001":{
+				"settings":{
+					"//":"subnettcpaddr 是用于组网的内部端口。",
+					"//":"必要时，你应配置你的防火墙来达到服务器集群成员身份验证的需求。",
+					"subnettcpaddr":":11001",
+					"//":"如果一个 module 具备 gatetcpaddr 配置项，",
+					"//":"那么这个 module 会初始化出 gateway 提供给外部客户端连接。",
+					"gatetcpaddr":":11002"
+				}
+			},
+			"gate002":{
+				"settings":{
+					"subnettcpaddr":":12001",
+					"gatetcpaddr":":12002"
+				}
+			},
+			"//gate003":{
+				"settings":{
+					"subnettcpaddr":":13001",
+					"gatetcpaddr":":13002"
+				}
+			},
+			"//gate004":{
+				"settings":{
+					"subnettcpaddr":":14001",
+					"gatetcpaddr":":14002"
+				}
+			},
+			"//gate005":{
+				"settings":{
+					"subnettcpaddr":":15001",
+					"gatetcpaddr":":15002"
+				}
+			},
+			"//gate006":{
+				"settings":{
+					"subnettcpaddr":":16001",
+					"gatetcpaddr":":16002"
+				}
+			},
+			"//gate007":{
+				"settings":{
+					"subnettcpaddr":":17001",
+					"gatetcpaddr":":17002"
+				}
+			},
+			"//gate008":{
+				"settings":{
+					"subnettcpaddr":":18001",
+					"gatetcpaddr":":18002"
+				}
+			},
+			"//gate009":{
+				"settings":{
+					"subnettcpaddr":":19001",
+					"gatetcpaddr":":19002"
+				}
+			},
+			"//gate010":{
+				"settings":{
+					"subnettcpaddr":":20001",
+					"gatetcpaddr":":20002"
+				}
+			}
+		}
+	}
+}
