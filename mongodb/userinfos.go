@@ -60,6 +60,18 @@ func (this *UserInfos) Upsert(obj IUser) (*mongo.UpdateResult, error) {
 	)
 }
 
+func (this *UserInfos) Update(obj IUser) (*mongo.UpdateResult, error) {
+	bsonm, err := GetBsonProxyJsonByObj(obj)
+	if err != nil {
+		return nil, err
+	}
+	return this.UpdateOne(obj.GetPrimaryKey(),
+		bson.M{
+			"$set": bsonm,
+		},
+	)
+}
+
 func (this *UserInfos) SelectOne(obj IUser) error {
 	res := this.Collection.SelectOne(obj.GetPrimaryKey())
 	var resBson = bson.M{}

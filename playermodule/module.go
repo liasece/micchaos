@@ -1,18 +1,18 @@
 package playermodule
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/liasece/micserver/module"
-	"go.mongodb.org/mongo-driver/bson"
 	"mongodb"
 	"playermodule/boxes"
+	"playermodule/manager"
 )
 
 type PlayerModule struct {
 	module.BaseModule
 
-	mongo_userinfos *mongodb.UserInfos
+	PlayerDocManager manager.PlayerDocManager
+	mongo_userinfos  *mongodb.UserInfos
 }
 
 func (this *PlayerModule) AfterInitModule() {
@@ -50,13 +50,6 @@ func (this *PlayerModule) AfterInitModule() {
 		this.Error("mongo_userinfos.Upsert err:%s", err.Error())
 	}
 
-	readPlayer := &boxes.Player{}
-	err = this.mongo_userinfos.SelectOneByKey(bson.M{
-		"account.uuid": "13412341",
-	}, readPlayer)
-	if err != nil {
-		this.Error("mongo_userinfos.SelectOneByKey err:%s", err.Error())
-	}
-	jsonb, _ := json.Marshal(readPlayer)
-	this.Info("%s", string(jsonb))
+	this.PlayerDocManager.Init(this.mongo_userinfos)
+	this.PlayerDocManager.Logger = this.Logger
 }
