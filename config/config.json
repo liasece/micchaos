@@ -8,7 +8,9 @@
 			"//":"isdaemon 用来告诉日志系统你是否需要在控制台显示log内容。",
 			"//":"如果你希望直接在终端运行并且希望日志显示在终端上，isdaemon 应为 false",
 			"//isdaemon":"true",
-			"msgthreadnum":"12"
+			"msgthreadnum":"12",
+			"database":"micworld",
+			"userdoc_collection":"userinfos"
 		},
 		"modules":{
 			"gate001":{
@@ -77,7 +79,8 @@
 			},
 			"player001":{
 				"settings":{
-					"subnettcpaddr":":13001"
+					"subnettcpaddr":":13001",
+					"mongodb":"mongodb://127.0.0.1:27017"
 				}
 			}
 		}

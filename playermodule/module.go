@@ -1,24 +1,34 @@
 package playermodule
 
 import (
+	"fmt"
 	"github.com/liasece/micserver/module"
 	"mongodb"
 )
 
 type PlayerModule struct {
-	mongodb_micworld *mongodb.MongoClient
 	module.BaseModule
+
+	mongo_userinfos *mongodb.UserInfos
 }
 
 func (this *PlayerModule) AfterInitModule() {
 	this.BaseModule.AfterInitModule()
-	this.Info("PlayerModule init finish %s", this.GetModuleID())
+	this.Debug("PlayerModule init finish %s", this.GetModuleID())
 
-	var err error
-	this.mongodb_micworld, err = mongodb.NewClient("mongodb://localhost:27017")
-	if err != nil {
-		this.Error("mongodb.NewClient err: %s", err.Error())
-	} else {
-		this.Info("mongodb.NewClient scesse")
+	mongouri := this.Configer.GetSetting("mongodb")
+
+	if mongouri != "" {
+		this.Debug("连接 MondgoDB[%s]", mongouri)
+		var err error
+
+		// 初始化玩家数据表
+		this.mongo_userinfos, err = mongodb.NewUserInfos(this, mongouri)
+		if err != nil {
+			this.Error("mongodb.NewUserInfos err: %s", err.Error())
+			panic(fmt.Sprintf("mongodb.NewUserInfos err: %s", err.Error()))
+		} else {
+			this.Debug("mongodb.NewUserInfos scesse")
+		}
 	}
 }

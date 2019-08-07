@@ -14,17 +14,17 @@ func NewClient(uri string) (*MongoClient, error) {
 }
 
 type MongoClient struct {
-	client *mongo.Client
+	*mongo.Client
 }
 
 func (this *MongoClient) Connect(uri string) (err error) {
 	opts := options.Client().ApplyURI(uri)
-	this.client, err = mongo.NewClient(opts)
+	this.Client, err = mongo.NewClient(opts)
 	if err != nil {
 		return
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
-	err = this.client.Connect(ctx)
+	err = this.Client.Connect(ctx)
 	return
 }
