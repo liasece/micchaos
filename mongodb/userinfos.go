@@ -3,6 +3,7 @@ package mongodb
 import (
 	"fmt"
 	"github.com/liasece/micserver/module"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type UserInfos struct {
@@ -39,5 +40,19 @@ func (this *UserInfos) Init(mod module.IModule, client *MongoClient) error {
 	} else {
 		this.Collection = this.database.Collection(collectionname)
 	}
+	return nil
+}
+
+func (this *UserInfos) Upsert(primarykey bson.M, player interface{}) error {
+	bsonm, err := GetBsonProxyJsonByObj(player)
+	if err != nil {
+		return err
+	}
+	this.UpdateOrInsertOne(
+		bson.M{
+			"$match": primarykey,
+		},
+		bsonm,
+	)
 	return nil
 }
