@@ -10,7 +10,7 @@
 			"//isdaemon":"true",
 			"msgthreadnum":"12",
 			"database":"micworld",
-			"userdoc_collection":"userinfos"
+			"userinfos_collection":"userinfos"
 		},
 		"modules":{
 			"gate001":{

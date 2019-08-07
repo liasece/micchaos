@@ -28,3 +28,9 @@ func (this *MongoClient) Connect(uri string) (err error) {
 	err = this.Client.Connect(ctx)
 	return
 }
+
+func (this *MongoClient) Database(name string) *Database {
+	res := &Database{}
+	res.Database = this.Client.Database(name)
+	return res
+}
