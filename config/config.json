@@ -21,7 +21,7 @@
 					"gatetcpaddr":":11002"
 				}
 			},
-			"gate002":{
+			"//gate002":{
 				"settings":{
 					"subnettcpaddr":":12001",
 					"gatetcpaddr":":12002"
