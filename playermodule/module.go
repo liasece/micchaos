@@ -14,10 +14,9 @@ type PlayerModule struct {
 
 func (this *PlayerModule) AfterInitModule() {
 	this.BaseModule.AfterInitModule()
-	this.Debug("PlayerModule init finish %s", this.GetModuleID())
 
+	// 数据库初始化
 	mongouri := this.Configer.GetSetting("mongodb")
-
 	if mongouri != "" {
 		this.Debug("连接 MondgoDB[%s]", mongouri)
 		var err error
@@ -30,5 +29,10 @@ func (this *PlayerModule) AfterInitModule() {
 		} else {
 			this.Debug("mongodb.NewUserInfos scesse")
 		}
+	}
+
+	subnet := this.GetSubnetManager()
+	if subnet != nil {
+
 	}
 }

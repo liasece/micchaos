@@ -26,7 +26,7 @@ func (this *GatewayModule) AfterInitModule() {
 	// 当收到服务器间消息时
 	subnet := this.GetSubnetManager()
 	if subnet != nil {
-		subnet.SubnetCallback.OnRecvServerMsg = this.HandleServerMsg
+		subnet.RegHandleServerMsg(this.HandleServerMsg)
 	}
 	// 业务逻辑
 	if this.GetModuleID() == "gate001" {
