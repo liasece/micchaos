@@ -23,17 +23,22 @@ func (this *Collection) InsertMany(
 }
 
 func (this *Collection) UpdateOrInsertOne(
-	where interface{}, doc interface{}) (*mongo.UpdateResult, error) {
-	return this.Collection.UpdateOne(context.Background(), where, doc,
+	filter interface{}, doc interface{}) (*mongo.UpdateResult, error) {
+	return this.Collection.UpdateOne(context.Background(), filter, doc,
 		options.Update().SetUpsert(true))
 }
 
 func (this *Collection) UpdateOne(
-	where interface{}, doc interface{}) (*mongo.UpdateResult, error) {
-	return this.Collection.UpdateOne(context.Background(), where, doc)
+	filter interface{}, doc interface{}) (*mongo.UpdateResult, error) {
+	return this.Collection.UpdateOne(context.Background(), filter, doc)
 }
 
 func (this *Collection) UpdateMany(
-	where interface{}, doc interface{}) (*mongo.UpdateResult, error) {
-	return this.Collection.UpdateOne(context.Background(), where, doc)
+	filter interface{}, doc interface{}) (*mongo.UpdateResult, error) {
+	return this.Collection.UpdateOne(context.Background(), filter, doc)
+}
+
+func (this *Collection) SelectOne(
+	filter interface{}) *mongo.SingleResult {
+	return this.Collection.FindOne(context.Background(), filter)
 }

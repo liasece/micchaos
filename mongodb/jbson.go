@@ -2,6 +2,7 @@ package mongodb
 
 import (
 	"encoding/json"
+	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -17,10 +18,13 @@ func GetBsonProxyJsonByObj(obj interface{}) (bson.M, error) {
 	if errJsonU != nil {
 		return nil, errJsonU
 	}
-	return proxyObj.(bson.M), nil
+	return bson.M(proxyObj.(map[string]interface{})), nil
 }
 
-func GetObjProxyJsonByBson(bdata bson.M, obj *interface{}) error {
+func GetObjProxyJsonByBson(bdata bson.M, obj interface{}) error {
+	if bdata == nil || obj == nil {
+		return fmt.Errorf("data or obj is nil")
+	}
 	// 取 json
 	jsonb, errJson := json.Marshal(bdata)
 	if errJson != nil {

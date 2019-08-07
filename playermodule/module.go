@@ -1,9 +1,12 @@
 package playermodule
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/liasece/micserver/module"
+	"go.mongodb.org/mongo-driver/bson"
 	"mongodb"
+	"playermodule/boxes"
 )
 
 type PlayerModule struct {
@@ -35,4 +38,25 @@ func (this *PlayerModule) AfterInitModule() {
 	if subnet != nil {
 
 	}
+
+	player := &boxes.Player{
+		Account: boxes.Account{
+			UUID: "13412341",
+		},
+		Name: "jansen",
+	}
+	_, err := this.mongo_userinfos.Upsert(player)
+	if err != nil {
+		this.Error("mongo_userinfos.Upsert err:%s", err.Error())
+	}
+
+	readPlayer := &boxes.Player{}
+	err = this.mongo_userinfos.SelectOneByKey(bson.M{
+		"account.uuid": "13412341",
+	}, readPlayer)
+	if err != nil {
+		this.Error("mongo_userinfos.SelectOneByKey err:%s", err.Error())
+	}
+	jsonb, _ := json.Marshal(readPlayer)
+	this.Info("%s", string(jsonb))
 }
