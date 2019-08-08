@@ -7,12 +7,12 @@ import (
 const (
 	CS_LoginID = 36
 	SC_ResLoginID = 37
-	UserInfoID = 38
+	AccountInfoID = 38
 )
 const (
 	CS_LoginName = "command.CS_Login"
 	SC_ResLoginName = "command.SC_ResLogin"
-	UserInfoName = "command.UserInfo"
+	AccountInfoName = "command.AccountInfo"
 )
 func (this *CS_Login) WriteBinary(data []byte) int {
 	return WriteMsgCS_LoginByObj(data,this)
@@ -20,8 +20,8 @@ func (this *CS_Login) WriteBinary(data []byte) int {
 func (this *SC_ResLogin) WriteBinary(data []byte) int {
 	return WriteMsgSC_ResLoginByObj(data,this)
 }
-func (this *UserInfo) WriteBinary(data []byte) int {
-	return WriteMsgUserInfoByObj(data,this)
+func (this *AccountInfo) WriteBinary(data []byte) int {
+	return WriteMsgAccountInfoByObj(data,this)
 }
 func (this *CS_Login) ReadBinary(data []byte) int {
 	size,_ := ReadMsgCS_LoginByBytes(data, this)
@@ -31,8 +31,8 @@ func (this *SC_ResLogin) ReadBinary(data []byte) int {
 	size,_ := ReadMsgSC_ResLoginByBytes(data, this)
 	return size
 }
-func (this *UserInfo) ReadBinary(data []byte) int {
-	size,_ := ReadMsgUserInfoByBytes(data, this)
+func (this *AccountInfo) ReadBinary(data []byte) int {
+	size,_ := ReadMsgAccountInfoByBytes(data, this)
 	return size
 }
 func MsgIdToString(id uint16) string {
@@ -41,8 +41,8 @@ func MsgIdToString(id uint16) string {
 		return CS_LoginName
 		case SC_ResLoginID: 
 		return SC_ResLoginName
-		case UserInfoID: 
-		return UserInfoName
+		case AccountInfoID: 
+		return AccountInfoName
 		default:
 		return ""
 	}
@@ -53,8 +53,8 @@ func StringToMsgId(msgname string) uint16 {
 		return CS_LoginID
 		case SC_ResLoginName: 
 		return SC_ResLoginID
-		case UserInfoName: 
-		return UserInfoID
+		case AccountInfoName: 
+		return AccountInfoID
 		default:
 		return 0
 	}
@@ -65,8 +65,8 @@ func MsgIdToType(id uint16) rune {
 		return rune('C')
 		case SC_ResLoginID: 
 		return rune('S')
-		case UserInfoID: 
-		return rune('U')
+		case AccountInfoID: 
+		return rune('A')
 		default:
 		return rune(0)
 	}
@@ -77,8 +77,8 @@ func (this *CS_Login) GetMsgId() uint16 {
 func (this *SC_ResLogin) GetMsgId() uint16 {
 	return SC_ResLoginID
 }
-func (this *UserInfo) GetMsgId() uint16 {
-	return UserInfoID
+func (this *AccountInfo) GetMsgId() uint16 {
+	return AccountInfoID
 }
 func (this *CS_Login) GetMsgName() string {
 	return CS_LoginName
@@ -86,8 +86,8 @@ func (this *CS_Login) GetMsgName() string {
 func (this *SC_ResLogin) GetMsgName() string {
 	return SC_ResLoginName
 }
-func (this *UserInfo) GetMsgName() string {
-	return UserInfoName
+func (this *AccountInfo) GetMsgName() string {
+	return AccountInfoName
 }
 func (this *CS_Login) GetSize() int {
 	return GetSizeCS_Login(this)
@@ -95,8 +95,8 @@ func (this *CS_Login) GetSize() int {
 func (this *SC_ResLogin) GetSize() int {
 	return GetSizeSC_ResLogin(this)
 }
-func (this *UserInfo) GetSize() int {
-	return GetSizeUserInfo(this)
+func (this *AccountInfo) GetSize() int {
+	return GetSizeAccountInfo(this)
 }
 func (this *CS_Login) GetJson() string {
 	json,_ := json.Marshal(this)
@@ -106,7 +106,7 @@ func (this *SC_ResLogin) GetJson() string {
 	json,_ := json.Marshal(this)
 	return string(json)
 }
-func (this *UserInfo) GetJson() string {
+func (this *AccountInfo) GetJson() string {
 	json,_ := json.Marshal(this)
 	return string(json)
 }
@@ -264,6 +264,11 @@ func ReadMsgCS_LoginByBytes(indata []byte, obj *CS_Login) (int,*CS_Login ) {
 	}
 	obj.Account = readBinaryString(data[offset:])
 	offset += 4 + len(obj.Account)
+	if offset + 4 + len(obj.PassWowdMD5) > data__len{
+		return endpos,obj
+	}
+	obj.PassWowdMD5 = readBinaryString(data[offset:])
+	offset += 4 + len(obj.PassWowdMD5)
 	return endpos,obj
 }
 func WriteMsgCS_LoginByObj(data []byte, obj *CS_Login) int {
@@ -277,13 +282,15 @@ func WriteMsgCS_LoginByObj(data []byte, obj *CS_Login) int {
 	offset += 4
 	writeBinaryString(data[offset:],obj.Account)
 	offset += 4 + len(obj.Account)
+	writeBinaryString(data[offset:],obj.PassWowdMD5)
+	offset += 4 + len(obj.PassWowdMD5)
 	return offset
 }
 func GetSizeCS_Login(obj *CS_Login) int {
 	if obj == nil {
 		return 4
 	}
-	return 4 + 4 + len(obj.Account)
+	return 4 + 4 + len(obj.Account) + 4 + len(obj.PassWowdMD5)
 }
 func ReadMsgSC_ResLoginByBytes(indata []byte, obj *SC_ResLogin) (int,*SC_ResLogin ) {
 	offset := 0
@@ -310,12 +317,22 @@ func ReadMsgSC_ResLoginByBytes(indata []byte, obj *SC_ResLogin) (int,*SC_ResLogi
 	}
 	obj.Code = readBinaryInt32(data[offset:offset+4])
 	offset+=4
-	if offset + obj.UserInfo.GetSize() > data__len{
+	if offset + 4 + len(obj.Message) > data__len{
 		return endpos,obj
 	}
-	rsize_UserInfo := 0
-	rsize_UserInfo,obj.UserInfo = ReadMsgUserInfoByBytes(data[offset:], nil)
-	offset += rsize_UserInfo
+	obj.Message = readBinaryString(data[offset:])
+	offset += 4 + len(obj.Message)
+	if offset + 4 + len(obj.ConnectID) > data__len{
+		return endpos,obj
+	}
+	obj.ConnectID = readBinaryString(data[offset:])
+	offset += 4 + len(obj.ConnectID)
+	if offset + obj.Account.GetSize() > data__len{
+		return endpos,obj
+	}
+	rsize_Account := 0
+	rsize_Account,obj.Account = ReadMsgAccountInfoByBytes(data[offset:], nil)
+	offset += rsize_Account
 	return endpos,obj
 }
 func WriteMsgSC_ResLoginByObj(data []byte, obj *SC_ResLogin) int {
@@ -329,16 +346,20 @@ func WriteMsgSC_ResLoginByObj(data []byte, obj *SC_ResLogin) int {
 	offset += 4
 	writeBinaryInt32(data[offset:offset+4], obj.Code)
 	offset+=4
-	offset += WriteMsgUserInfoByObj(data[offset:], obj.UserInfo)
+	writeBinaryString(data[offset:],obj.Message)
+	offset += 4 + len(obj.Message)
+	writeBinaryString(data[offset:],obj.ConnectID)
+	offset += 4 + len(obj.ConnectID)
+	offset += WriteMsgAccountInfoByObj(data[offset:], obj.Account)
 	return offset
 }
 func GetSizeSC_ResLogin(obj *SC_ResLogin) int {
 	if obj == nil {
 		return 4
 	}
-	return 4 + 4 + obj.UserInfo.GetSize()
+	return 4 + 4 + 4 + len(obj.Message) + 4 + len(obj.ConnectID) + obj.Account.GetSize()
 }
-func ReadMsgUserInfoByBytes(indata []byte, obj *UserInfo) (int,*UserInfo ) {
+func ReadMsgAccountInfoByBytes(indata []byte, obj *AccountInfo) (int,*AccountInfo ) {
 	offset := 0
 	if len(indata) < 4 {
 		return 0,nil
@@ -349,7 +370,7 @@ func ReadMsgUserInfoByBytes(indata []byte, obj *UserInfo) (int,*UserInfo ) {
 		return 4,nil
 	}
 	if obj == nil{
-		obj=&UserInfo{}
+		obj=&AccountInfo{}
 	}
 	if offset + objsize > len(indata ) {
 		return offset,obj
@@ -370,7 +391,7 @@ func ReadMsgUserInfoByBytes(indata []byte, obj *UserInfo) (int,*UserInfo ) {
 	offset += 4 + len(obj.Name)
 	return endpos,obj
 }
-func WriteMsgUserInfoByObj(data []byte, obj *UserInfo) int {
+func WriteMsgAccountInfoByObj(data []byte, obj *AccountInfo) int {
 	if obj == nil {
 		binary.BigEndian.PutUint32(data[0:4],0)
 		return 4
@@ -385,7 +406,7 @@ func WriteMsgUserInfoByObj(data []byte, obj *UserInfo) int {
 	offset += 4 + len(obj.Name)
 	return offset
 }
-func GetSizeUserInfo(obj *UserInfo) int {
+func GetSizeAccountInfo(obj *AccountInfo) int {
 	if obj == nil {
 		return 4
 	}

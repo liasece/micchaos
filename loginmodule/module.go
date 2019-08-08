@@ -1,23 +1,20 @@
-package playermodule
+package loginmodule
 
 import (
 	"fmt"
 	"github.com/liasece/micserver/module"
 	"mongodb"
-	"playermodule/boxes"
-	"playermodule/manager"
 )
 
-type PlayerModule struct {
+type LoginModule struct {
 	module.BaseModule
 
-	PlayerDocManager manager.PlayerDocManager
-	mongo_userinfos  *mongodb.UserInfos
-	HandlerClient    HandlerClient
-	HandlerServer    HandlerServer
+	mongo_userinfos *mongodb.UserInfos
+	HandlerClient   HandlerClient
+	HandlerServer   HandlerServer
 }
 
-func (this *PlayerModule) AfterInitModule() {
+func (this *LoginModule) AfterInitModule() {
 	this.BaseModule.AfterInitModule()
 
 	this.HandlerClient.Init(this)
@@ -38,20 +35,6 @@ func (this *PlayerModule) AfterInitModule() {
 			this.Debug("mongodb.NewUserInfos scesse")
 		}
 	}
-
-	player := &boxes.Player{
-		Account: boxes.Account{
-			UUID: "13412341",
-		},
-		Name: "jansen",
-	}
-	_, err := this.mongo_userinfos.Upsert(player)
-	if err != nil {
-		this.Error("mongo_userinfos.Upsert err:%s", err.Error())
-	}
-
-	this.PlayerDocManager.Init(this.mongo_userinfos)
-	this.PlayerDocManager.Logger = this.Logger
 
 	// 系统事件监听初始化
 	subnetManager := this.GetSubnetManager()

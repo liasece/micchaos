@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"gatemodule"
+	"loginmodule"
 	"playermodule"
 
 	"github.com/liasece/micserver/conf"
@@ -62,6 +63,12 @@ func (this *InitManager) GetProgramModuleList() []module.IModule {
 				})
 			case "player":
 				this.addModule(&playermodule.PlayerModule{
+					BaseModule: module.BaseModule{
+						ModuleID: pid,
+					},
+				})
+			case "login":
+				this.addModule(&loginmodule.LoginModule{
 					BaseModule: module.BaseModule{
 						ModuleID: pid,
 					},

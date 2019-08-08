@@ -91,3 +91,21 @@ func (this *UserInfos) SelectOneByKey(primarykey bson.M, obj interface{}) error 
 	}
 	return GetObjProxyJsonByBson(resBson, obj)
 }
+
+func (this *UserInfos) SelectOneByAccount(account string, passwdmd5 string,
+	obj interface{}) error {
+	primarykey := bson.M{
+		"$or": bson.A{
+			bson.M{"account.phonenumber": account},
+			bson.M{"account.uuid": account},
+		},
+		"account.passwdmd5": passwdmd5,
+	}
+	res := this.Collection.SelectOne(primarykey)
+	var resBson = bson.M{}
+	err := res.Decode(&resBson)
+	if err != nil {
+		return err
+	}
+	return GetObjProxyJsonByBson(resBson, obj)
+}

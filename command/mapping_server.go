@@ -8,7 +8,7 @@ var mapping map[string]string
 
 func init() {
 	mapping = make(map[string]string)
-	ToPlayer(&CS_Login{})
+	ToLogin(&CS_Login{})
 }
 
 func GetServerTypeByID(id uint16) string {
@@ -21,4 +21,8 @@ func GetServerTypeByMsgName(msgname string) string {
 
 func ToPlayer(m msg.MsgStruct) {
 	mapping[m.GetMsgName()] = "player"
+}
+
+func ToLogin(m msg.MsgStruct) {
+	mapping[m.GetMsgName()] = "login"
 }

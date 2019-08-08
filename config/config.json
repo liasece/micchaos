@@ -82,6 +82,12 @@
 					"subnettcpaddr":":13001",
 					"mongodb":"mongodb://127.0.0.1:27017"
 				}
+			},
+			"login001":{
+				"settings":{
+					"subnettcpaddr":":14001",
+					"mongodb":"mongodb://127.0.0.1:27017"
+				}
 			}
 		}
 	}

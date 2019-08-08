@@ -17,7 +17,7 @@ func (this *HandlerClient) Init(mod *PlayerModule) {
 }
 
 func (this *HandlerClient) OnRecvClientMsg(smsg *servercomm.SForwardFromGate) {
-	this.Info("[HandlerClient.OnRecvServerMsg] 收到 Client 消息 %s",
+	this.Info("[HandlerClient.OnRecvClientMsg] 收到 Client 消息 %s",
 		smsg.MsgName)
 	this.msgCount++
 	now := time.Now().UnixNano()
@@ -28,5 +28,4 @@ func (this *HandlerClient) OnRecvClientMsg(smsg *servercomm.SForwardFromGate) {
 		}
 		this.msgCount = 0
 	}
-
 }

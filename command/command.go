@@ -3,15 +3,19 @@ package command
 import ()
 
 type CS_Login struct {
-	Account string
+	Account     string
+	PassWowdMD5 string
 }
 
 type SC_ResLogin struct {
-	Code     int32
-	UserInfo *UserInfo
+	// 0 为成功
+	Code      int32
+	Message   string
+	ConnectID string
+	Account   *AccountInfo
 }
 
-type UserInfo struct {
+type AccountInfo struct {
 	UUID string
 	Name string
 }
