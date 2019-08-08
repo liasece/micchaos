@@ -13,10 +13,15 @@ type PlayerModule struct {
 
 	PlayerDocManager manager.PlayerDocManager
 	mongo_userinfos  *mongodb.UserInfos
+	HandlerClient    HandlerClient
+	HandlerServer    HandlerServer
 }
 
 func (this *PlayerModule) AfterInitModule() {
 	this.BaseModule.AfterInitModule()
+
+	this.HandlerClient.Init(this)
+	this.HandlerServer.Init(this)
 
 	// 数据库初始化
 	mongouri := this.Configer.GetSetting("mongodb")
@@ -52,4 +57,11 @@ func (this *PlayerModule) AfterInitModule() {
 
 	this.PlayerDocManager.Init(this.mongo_userinfos)
 	this.PlayerDocManager.Logger = this.Logger
+
+	// 系统事件监听初始化
+	subnetManager := this.GetSubnetManager()
+	if subnetManager != nil {
+		subnetManager.RegHandleServerMsg(this.HandlerServer.OnRecvServerMsg)
+		subnetManager.RegHandleGateMsg(this.HandlerServer.OnRecvGateMsg)
+	}
 }

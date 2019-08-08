@@ -7,21 +7,25 @@ COMM_PATH=./comm/
 EXCELJSON_PATH = ./exceljson 
 CEHUA_SVNURL = https://192.168.150.238/svn/GiantCode/wxcat/cehua/$(USER)/
 
-SUB_DIRS = ./chaos
+SUB_DIRS = chaos testclient
 
 all: debug 
 
 debug:
 	@cd github.com/liasece/micserver/tools && ./makeservermsg.sh
 	@echo GOPATH:$(GOPATH)
-	@go install -gcflags "-N -l" $(SUB_DIRS) || exit 1; 
+	@for dir in $(SUB_DIRS); do \
+		go install -gcflags "-N -l" ./$$dir || exit 1; \
+	done
 	@echo Done
 
 proto:
 	protoc -I=$(COMM_PATH) --proto_path=$(COMM_PATH) --go_out=. $(COMM_PATH)/*.proto
 
 clean:
-	@rm -rf ../bin/src
+	@for bdir in $(SUB_DIRS); do \
+		rm -rf ../bin/$$bdir
+	done
 	@find -name "*~" | xargs rm -f
 	@find -name "*.swp" | xargs rm -f
 	@rm -rf release/*
