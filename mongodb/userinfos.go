@@ -98,6 +98,7 @@ func (this *UserInfos) SelectOneByAccount(account string, passwdmd5 string,
 		"$or": bson.A{
 			bson.M{"account.phonenumber": account},
 			bson.M{"account.uuid": account},
+			bson.M{"account.loginname": account},
 		},
 		"account.passwdmd5": passwdmd5,
 	}
@@ -108,4 +109,26 @@ func (this *UserInfos) SelectOneByAccount(account string, passwdmd5 string,
 		return err
 	}
 	return GetObjProxyJsonByBson(resBson, obj)
+}
+
+func (this *UserInfos) FindOneOrCreate(account string, newobj interface{},
+	result interface{}) error {
+	primarykey := bson.M{
+		"$or": bson.A{
+			bson.M{"account.phonenumber": account},
+			bson.M{"account.uuid": account},
+			bson.M{"account.loginname": account},
+		},
+	}
+	bsonm, err := GetBsonProxyJsonByObj(newobj)
+	if err != nil {
+		return err
+	}
+	res := this.Collection.FindOneOrCreate(primarykey, bsonm)
+	var resBson = bson.M{}
+	err = res.Decode(&resBson)
+	if err != nil {
+		return err
+	}
+	return GetObjProxyJsonByBson(resBson, result)
 }

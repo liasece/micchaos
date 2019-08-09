@@ -40,6 +40,9 @@ func (this *GatewayModule) HandleClientSocketMsg(
 		serverid = this.GetBalanceServerID(servertype)
 		if serverid != "" {
 			conn.Session[servertype] = serverid
+		} else {
+			this.Error("找不到合适的目标服务器 MsgName[%s] ServerType[%s]",
+				msgname, servertype)
 		}
 	}
 	if serverid != "" {

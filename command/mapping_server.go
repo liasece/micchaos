@@ -9,6 +9,7 @@ var mapping map[string]string
 func init() {
 	mapping = make(map[string]string)
 	ToLogin(&CS_Login{})
+	ToLogin(&CS_Register{})
 }
 
 func GetServerTypeByID(id uint16) string {

@@ -2,11 +2,14 @@ package mongodb
 
 import (
 	"context"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var optUpset = options.Update().SetUpsert(true)
+var optFindOneOrCreate = options.FindOneAndUpdate().SetUpsert(true).
+	SetReturnDocument(options.After)
 
 type Collection struct {
 	*mongo.Collection
@@ -41,4 +44,13 @@ func (this *Collection) UpdateMany(
 func (this *Collection) SelectOne(
 	filter interface{}) *mongo.SingleResult {
 	return this.Collection.FindOne(context.Background(), filter)
+}
+
+func (this *Collection) FindOneOrCreate(filter interface{},
+	doc interface{}) *mongo.SingleResult {
+	return this.Collection.FindOneAndUpdate(context.Background(),
+		filter,
+		bson.M{
+			"$setOnInsert": doc,
+		}, optFindOneOrCreate)
 }

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/liasece/micserver/module"
 	"mongodb"
-	"playermodule/boxes"
+	// "playermodule/boxes"
 	"playermodule/manager"
 )
 
@@ -39,16 +39,16 @@ func (this *PlayerModule) AfterInitModule() {
 		}
 	}
 
-	player := &boxes.Player{
-		Account: boxes.Account{
-			UUID: "13412341",
-		},
-		Name: "jansen",
-	}
-	_, err := this.mongo_userinfos.Upsert(player)
-	if err != nil {
-		this.Error("mongo_userinfos.Upsert err:%s", err.Error())
-	}
+	// player := &boxes.Player{
+	// 	Account: boxes.Account{
+	// 		UUID: "13412341",
+	// 	},
+	// 	Name: "jansen",
+	// }
+	// _, err := this.mongo_userinfos.Upsert(player)
+	// if err != nil {
+	// 	this.Error("mongo_userinfos.Upsert err:%s", err.Error())
+	// }
 
 	this.PlayerDocManager.Init(this.mongo_userinfos)
 	this.PlayerDocManager.Logger = this.Logger
