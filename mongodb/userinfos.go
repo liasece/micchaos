@@ -92,7 +92,7 @@ func (this *UserInfos) SelectOneByKey(primarykey bson.M, obj interface{}) error 
 	return GetObjProxyJsonByBson(resBson, obj)
 }
 
-func (this *UserInfos) SelectOneByAccount(account string, passwdmd5 string,
+func (this *UserInfos) SelectOneByAccount(account string,
 	obj interface{}) error {
 	primarykey := bson.M{
 		"$or": bson.A{
@@ -100,7 +100,6 @@ func (this *UserInfos) SelectOneByAccount(account string, passwdmd5 string,
 			bson.M{"account.uuid": account},
 			bson.M{"account.loginname": account},
 		},
-		"account.passwdmd5": passwdmd5,
 	}
 	res := this.Collection.SelectOne(primarykey)
 	var resBson = bson.M{}

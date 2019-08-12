@@ -4,7 +4,7 @@ import ()
 
 type CS_Login struct {
 	LoginName   string
-	PassWowdMD5 string
+	PassWordMD5 string
 }
 
 type SC_ResLogin struct {
@@ -22,7 +22,7 @@ type AccountInfo struct {
 
 type CS_Register struct {
 	LoginName   string
-	PassWowdMD5 string
+	PassWordMD5 string
 }
 
 type SC_ResRigster struct {

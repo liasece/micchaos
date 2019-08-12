@@ -2,11 +2,13 @@ package loginmodule
 
 import (
 	"command"
+	"fmt"
 	"github.com/liasece/micserver/servercomm"
 	"github.com/liasece/micserver/util"
+	"math/rand"
 	"playermodule/boxes"
 	"reflect"
-	// "time"
+	"time"
 )
 
 type TmpPlayer struct {
@@ -56,10 +58,14 @@ func (this *HandlerClient) OnCS_Register(smsg *servercomm.SForwardFromGate) {
 		this.Error("UUID构建错误 %s", err.Error())
 		return
 	}
+	salt := fmt.Sprint(util.GetStringHash(tmpuuid +
+		fmt.Sprint(time.Now().UnixNano()+rand.Int63())))
+	pswmd5ws := util.HmacSha256ByString(msg.PassWordMD5, salt)
 	confirm := &TmpPlayer{}
 	newaccount := &TmpPlayer{}
 	newaccount.Account = &boxes.Account{}
-	newaccount.Account.PassWordMD5 = msg.PassWowdMD5
+	newaccount.Account.PassWordMD5WSSalt = salt
+	newaccount.Account.PassWordMD5WS = pswmd5ws
 	newaccount.Account.LoginName = msg.LoginName
 	newaccount.Account.UUID = tmpuuid
 	err = this.mongo_userinfos.FindOneOrCreate(msg.LoginName, newaccount, confirm)
@@ -71,9 +77,10 @@ func (this *HandlerClient) OnCS_Register(smsg *servercomm.SForwardFromGate) {
 			return
 		}
 		if confirm.Account.UUID == newaccount.Account.UUID {
-			this.Info("查找玩家成功 %s:%s:%s:%s", newaccount.Account.LoginName,
+			this.Info("查找玩家成功 %s:%s:%s:%s:%s", newaccount.Account.LoginName,
 				newaccount.Account.UUID, newaccount.Account.PhoneNumber,
-				newaccount.Account.PassWordMD5)
+				newaccount.Account.PassWordMD5WS,
+				newaccount.Account.PassWordMD5WSSalt)
 		} else {
 			this.Info("目标玩家已经存在了，创建账号失败，已存在玩家的UUID[%s]",
 				confirm.Account.UUID)
@@ -94,25 +101,37 @@ func (this *HandlerClient) OnCS_Login(smsg *servercomm.SForwardFromGate) {
 	this.Info("command.CS_Login: %s", msg.GetJson())
 	tmpplayer := &TmpPlayer{}
 	err := this.mongo_userinfos.SelectOneByAccount(
-		msg.LoginName, msg.PassWowdMD5, tmpplayer)
+		msg.LoginName, tmpplayer)
 	if err != nil {
 		// 登陆失败
 		this.Error("登陆失败 Err[%s] ReqJson[%s]", err.Error(), msg.GetJson())
 		send := &command.SC_ResLogin{
 			Code:      1,
-			Message:   "用户名或密码不匹配",
+			Message:   "目标账号不存在",
 			ConnectID: smsg.ClientConnID,
 		}
 		this.SendMsgToClient(smsg.FromServerID, smsg.ClientConnID, send)
 	} else {
-		// 登陆成功
-		this.Info("登陆成功 %s", msg.GetJson())
-		send := &command.SC_ResLogin{
-			Code:      0,
-			Message:   "login secess",
-			ConnectID: smsg.ClientConnID,
-			Account:   tmpplayer.Account.GetMsg(),
+		pswmd5ws := util.HmacSha256ByString(msg.PassWordMD5, msg.PassWordMD5)
+		if tmpplayer.Account.PassWordMD5WSSalt != pswmd5ws {
+			// 密码错误
+			this.Info("登陆失败 密码错误 ReqJson[%s]", msg.GetJson())
+			send := &command.SC_ResLogin{
+				Code:      1,
+				Message:   "密码错误",
+				ConnectID: smsg.ClientConnID,
+			}
+			this.SendMsgToClient(smsg.FromServerID, smsg.ClientConnID, send)
+		} else {
+			// 登陆成功
+			this.Info("登陆成功 %s", msg.GetJson())
+			send := &command.SC_ResLogin{
+				Code:      0,
+				Message:   "login secess",
+				ConnectID: smsg.ClientConnID,
+				Account:   tmpplayer.Account.GetMsg(),
+			}
+			this.SendServerCmdToServer(smsg.FromServerID, send)
 		}
-		this.SendServerCmdToServer(smsg.FromServerID, send)
 	}
 }

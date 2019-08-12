@@ -22,7 +22,7 @@ func main() {
 		}
 		client.Conn.SendCmd(&command.CS_Register{
 			LoginName:   client.LoginName,
-			PassWowdMD5: "psw123456",
+			PassWordMD5: "psw123456",
 		})
 		time.Sleep(time.Millisecond * 4)
 		stopchan <- struct{}{}

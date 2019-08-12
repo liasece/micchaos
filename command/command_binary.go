@@ -320,11 +320,11 @@ func ReadMsgCS_LoginByBytes(indata []byte, obj *CS_Login) (int,*CS_Login ) {
 	}
 	obj.LoginName = readBinaryString(data[offset:])
 	offset += 4 + len(obj.LoginName)
-	if offset + 4 + len(obj.PassWowdMD5) > data__len{
+	if offset + 4 + len(obj.PassWordMD5) > data__len{
 		return endpos,obj
 	}
-	obj.PassWowdMD5 = readBinaryString(data[offset:])
-	offset += 4 + len(obj.PassWowdMD5)
+	obj.PassWordMD5 = readBinaryString(data[offset:])
+	offset += 4 + len(obj.PassWordMD5)
 	return endpos,obj
 }
 func WriteMsgCS_LoginByObj(data []byte, obj *CS_Login) int {
@@ -338,15 +338,15 @@ func WriteMsgCS_LoginByObj(data []byte, obj *CS_Login) int {
 	offset += 4
 	writeBinaryString(data[offset:],obj.LoginName)
 	offset += 4 + len(obj.LoginName)
-	writeBinaryString(data[offset:],obj.PassWowdMD5)
-	offset += 4 + len(obj.PassWowdMD5)
+	writeBinaryString(data[offset:],obj.PassWordMD5)
+	offset += 4 + len(obj.PassWordMD5)
 	return offset
 }
 func GetSizeCS_Login(obj *CS_Login) int {
 	if obj == nil {
 		return 4
 	}
-	return 4 + 4 + len(obj.LoginName) + 4 + len(obj.PassWowdMD5)
+	return 4 + 4 + len(obj.LoginName) + 4 + len(obj.PassWordMD5)
 }
 func ReadMsgSC_ResLoginByBytes(indata []byte, obj *SC_ResLogin) (int,*SC_ResLogin ) {
 	offset := 0
@@ -493,11 +493,11 @@ func ReadMsgCS_RegisterByBytes(indata []byte, obj *CS_Register) (int,*CS_Registe
 	}
 	obj.LoginName = readBinaryString(data[offset:])
 	offset += 4 + len(obj.LoginName)
-	if offset + 4 + len(obj.PassWowdMD5) > data__len{
+	if offset + 4 + len(obj.PassWordMD5) > data__len{
 		return endpos,obj
 	}
-	obj.PassWowdMD5 = readBinaryString(data[offset:])
-	offset += 4 + len(obj.PassWowdMD5)
+	obj.PassWordMD5 = readBinaryString(data[offset:])
+	offset += 4 + len(obj.PassWordMD5)
 	return endpos,obj
 }
 func WriteMsgCS_RegisterByObj(data []byte, obj *CS_Register) int {
@@ -511,15 +511,15 @@ func WriteMsgCS_RegisterByObj(data []byte, obj *CS_Register) int {
 	offset += 4
 	writeBinaryString(data[offset:],obj.LoginName)
 	offset += 4 + len(obj.LoginName)
-	writeBinaryString(data[offset:],obj.PassWowdMD5)
-	offset += 4 + len(obj.PassWowdMD5)
+	writeBinaryString(data[offset:],obj.PassWordMD5)
+	offset += 4 + len(obj.PassWordMD5)
 	return offset
 }
 func GetSizeCS_Register(obj *CS_Register) int {
 	if obj == nil {
 		return 4
 	}
-	return 4 + 4 + len(obj.LoginName) + 4 + len(obj.PassWowdMD5)
+	return 4 + 4 + len(obj.LoginName) + 4 + len(obj.PassWordMD5)
 }
 func ReadMsgSC_ResRigsterByBytes(indata []byte, obj *SC_ResRigster) (int,*SC_ResRigster ) {
 	offset := 0

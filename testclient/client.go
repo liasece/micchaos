@@ -33,7 +33,7 @@ func (this *Client) OnRecvSocketPackage(msgbinary *msg.MessageBinary) {
 func (this *Client) OnResRigster(msg *command.SC_ResRigster) {
 	this.Conn.SendCmd(&command.CS_Login{
 		LoginName:   this.LoginName,
-		PassWowdMD5: "psw123456",
+		PassWordMD5: "psw123456",
 	})
 	if msg.Code != 0 {
 		this.Error("注册账号失败 %s", msg.GetJson())
