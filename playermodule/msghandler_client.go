@@ -34,6 +34,7 @@ func (this *HandlerClient) Init(mod *PlayerModule) {
 	}
 }
 
+//
 func (this *HandlerClient) OnRecvClientMsg(smsg *servercomm.SForwardFromGate) {
 	this.Info("[HandlerClient.OnRecvClientMsg] 收到 Client 消息 %s",
 		smsg.MsgName)
@@ -53,8 +54,15 @@ func (this *HandlerClient) OnRecvClientMsg(smsg *servercomm.SForwardFromGate) {
 	}
 }
 
+// 客户端请求进入游戏
 func (this *HandlerClient) OnCS_EnterGame(smsg *servercomm.SForwardFromGate) {
 	msg := &command.CS_EnterGame{}
 	msg.ReadBinary(smsg.Data)
 	this.Info("收到 %s", msg.GetJson())
+	player := this.PlayerDocManager.GetPlayerDocMust(smsg.Session["UUID"])
+	if player != nil {
+		player.AfterOnline(smsg.Session)
+	} else {
+		this.Error("获取Player失败 %s", smsg.GetJson())
+	}
 }

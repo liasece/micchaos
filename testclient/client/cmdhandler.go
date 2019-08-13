@@ -30,21 +30,24 @@ func (this *CmdHandler) Init(c *Client) {
 	}
 }
 
+// 注册账号的回复信息
 func (this *CmdHandler) OnSC_ResAccountRigster(msgbinary *msg.MessageBinary) {
 	msg := &command.SC_ResAccountRigster{}
 	msg.ReadBinary(msgbinary.ProtoData)
 
-	this.Conn.SendCmd(this.GetLoginMsg())
 	if msg.Code != 0 {
 		this.Error("注册账号失败 %s", msg.GetJson())
-		return
+	} else {
+		this.Info("注册成功 %s", msg.GetJson())
+		if msg.Account.LoginName != "" {
+			this.Logger.SetLogName(msg.Account.LoginName)
+		}
 	}
-	this.Info("注册成功 %s", msg.GetJson())
-	if msg.Account.LoginName != "" {
-		this.Logger.SetLogName(msg.Account.LoginName)
-	}
+	// 登陆
+	this.Conn.SendCmd(this.GetLoginMsg())
 }
 
+// 登陆账号的回复信息
 func (this *CmdHandler) OnSC_ResAccountLogin(msgbinary *msg.MessageBinary) {
 	msg := &command.SC_ResAccountLogin{}
 	msg.ReadBinary(msgbinary.ProtoData)
@@ -53,9 +56,10 @@ func (this *CmdHandler) OnSC_ResAccountLogin(msgbinary *msg.MessageBinary) {
 		this.Error("登陆失败 %s", msg.GetJson())
 		return
 	}
-	this.Info("登陆成功 %s", msg.GetJson())
 	if msg.Account.LoginName != "" {
 		this.Logger.SetLogName(msg.Account.LoginName)
 	}
+	this.Info("登陆成功 %s", msg.GetJson())
+	// 进入游戏
 	this.Conn.SendCmd(&command.CS_EnterGame{})
 }

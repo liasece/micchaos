@@ -38,7 +38,7 @@ func (this *PlayerDocManager) loadOrStore(
 			return p
 		}
 	}
-	return nil
+	return p
 }
 
 // 从数据库获取用户信息
@@ -51,6 +51,8 @@ func (this *PlayerDocManager) getPlayerFromDB(uuid string) *boxes.Player {
 		this.Error("mongo_userinfos.SelectOneByKey err:%s", err.Error())
 		return nil
 	}
+	readPlayer.Logger = this.Logger.Clone()
+	readPlayer.AfterLoad()
 	return readPlayer
 }
 
