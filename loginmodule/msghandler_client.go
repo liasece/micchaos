@@ -2,13 +2,10 @@ package loginmodule
 
 import (
 	"command"
-	"fmt"
 	"github.com/liasece/micserver/servercomm"
 	"github.com/liasece/micserver/util"
-	"math/rand"
 	"playermodule/boxes"
 	"reflect"
-	"time"
 )
 
 type TmpPlayer struct {
@@ -58,8 +55,11 @@ func (this *HandlerClient) OnCS_Register(smsg *servercomm.SForwardFromGate) {
 		this.Error("UUID构建错误 %s", err.Error())
 		return
 	}
-	salt := fmt.Sprint(util.GetStringHash(tmpuuid +
-		fmt.Sprint(time.Now().UnixNano()+rand.Int63())))
+	salt, errGSalt := util.GenerateRandomString(16)
+	if errGSalt != nil {
+		this.Error("计算生成盐错误 %s", errGSalt.Error())
+		return
+	}
 	pswmd5ws := util.HmacSha256ByString(msg.PassWordMD5, salt)
 	confirm := &TmpPlayer{}
 	newaccount := &TmpPlayer{}
@@ -112,8 +112,9 @@ func (this *HandlerClient) OnCS_Login(smsg *servercomm.SForwardFromGate) {
 		}
 		this.SendMsgToClient(smsg.FromServerID, smsg.ClientConnID, send)
 	} else {
-		pswmd5ws := util.HmacSha256ByString(msg.PassWordMD5, msg.PassWordMD5)
-		if tmpplayer.Account.PassWordMD5WSSalt != pswmd5ws {
+		pswmd5ws := util.HmacSha256ByString(msg.PassWordMD5,
+			tmpplayer.Account.PassWordMD5WSSalt)
+		if tmpplayer.Account.PassWordMD5WS != pswmd5ws {
 			// 密码错误
 			this.Info("登陆失败 密码错误 ReqJson[%s]", msg.GetJson())
 			send := &command.SC_ResLogin{
@@ -124,7 +125,11 @@ func (this *HandlerClient) OnCS_Login(smsg *servercomm.SForwardFromGate) {
 			this.SendMsgToClient(smsg.FromServerID, smsg.ClientConnID, send)
 		} else {
 			// 登陆成功
-			this.Info("登陆成功 %s", msg.GetJson())
+			this.Info("登陆成功 Msg[%s] %s:%s:%s:%s:%s", msg.GetJson(),
+				tmpplayer.Account.LoginName, tmpplayer.Account.UUID,
+				tmpplayer.Account.PhoneNumber,
+				tmpplayer.Account.PassWordMD5WS,
+				tmpplayer.Account.PassWordMD5WSSalt)
 			send := &command.SC_ResLogin{
 				Code:      0,
 				Message:   "login secess",
