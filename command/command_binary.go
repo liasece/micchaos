@@ -5,152 +5,152 @@ import (
 	"encoding/json"
 )
 const (
-	CS_LoginID = 36
-	SC_ResLoginID = 37
+	CS_AccountLoginID = 36
+	SC_ResAccountLoginID = 37
 	AccountInfoID = 38
-	CS_RegisterID = 39
-	SC_ResRigsterID = 40
+	CS_AccountRegisterID = 39
+	SC_ResAccountRigsterID = 40
 )
 const (
-	CS_LoginName = "command.CS_Login"
-	SC_ResLoginName = "command.SC_ResLogin"
+	CS_AccountLoginName = "command.CS_AccountLogin"
+	SC_ResAccountLoginName = "command.SC_ResAccountLogin"
 	AccountInfoName = "command.AccountInfo"
-	CS_RegisterName = "command.CS_Register"
-	SC_ResRigsterName = "command.SC_ResRigster"
+	CS_AccountRegisterName = "command.CS_AccountRegister"
+	SC_ResAccountRigsterName = "command.SC_ResAccountRigster"
 )
-func (this *CS_Login) WriteBinary(data []byte) int {
-	return WriteMsgCS_LoginByObj(data,this)
+func (this *CS_AccountLogin) WriteBinary(data []byte) int {
+	return WriteMsgCS_AccountLoginByObj(data,this)
 }
-func (this *SC_ResLogin) WriteBinary(data []byte) int {
-	return WriteMsgSC_ResLoginByObj(data,this)
+func (this *SC_ResAccountLogin) WriteBinary(data []byte) int {
+	return WriteMsgSC_ResAccountLoginByObj(data,this)
 }
 func (this *AccountInfo) WriteBinary(data []byte) int {
 	return WriteMsgAccountInfoByObj(data,this)
 }
-func (this *CS_Register) WriteBinary(data []byte) int {
-	return WriteMsgCS_RegisterByObj(data,this)
+func (this *CS_AccountRegister) WriteBinary(data []byte) int {
+	return WriteMsgCS_AccountRegisterByObj(data,this)
 }
-func (this *SC_ResRigster) WriteBinary(data []byte) int {
-	return WriteMsgSC_ResRigsterByObj(data,this)
+func (this *SC_ResAccountRigster) WriteBinary(data []byte) int {
+	return WriteMsgSC_ResAccountRigsterByObj(data,this)
 }
-func (this *CS_Login) ReadBinary(data []byte) int {
-	size,_ := ReadMsgCS_LoginByBytes(data, this)
+func (this *CS_AccountLogin) ReadBinary(data []byte) int {
+	size,_ := ReadMsgCS_AccountLoginByBytes(data, this)
 	return size
 }
-func (this *SC_ResLogin) ReadBinary(data []byte) int {
-	size,_ := ReadMsgSC_ResLoginByBytes(data, this)
+func (this *SC_ResAccountLogin) ReadBinary(data []byte) int {
+	size,_ := ReadMsgSC_ResAccountLoginByBytes(data, this)
 	return size
 }
 func (this *AccountInfo) ReadBinary(data []byte) int {
 	size,_ := ReadMsgAccountInfoByBytes(data, this)
 	return size
 }
-func (this *CS_Register) ReadBinary(data []byte) int {
-	size,_ := ReadMsgCS_RegisterByBytes(data, this)
+func (this *CS_AccountRegister) ReadBinary(data []byte) int {
+	size,_ := ReadMsgCS_AccountRegisterByBytes(data, this)
 	return size
 }
-func (this *SC_ResRigster) ReadBinary(data []byte) int {
-	size,_ := ReadMsgSC_ResRigsterByBytes(data, this)
+func (this *SC_ResAccountRigster) ReadBinary(data []byte) int {
+	size,_ := ReadMsgSC_ResAccountRigsterByBytes(data, this)
 	return size
 }
 func MsgIdToString(id uint16) string {
 	switch(id ) {
-		case CS_LoginID: 
-		return CS_LoginName
-		case SC_ResLoginID: 
-		return SC_ResLoginName
+		case CS_AccountLoginID: 
+		return CS_AccountLoginName
+		case SC_ResAccountLoginID: 
+		return SC_ResAccountLoginName
 		case AccountInfoID: 
 		return AccountInfoName
-		case CS_RegisterID: 
-		return CS_RegisterName
-		case SC_ResRigsterID: 
-		return SC_ResRigsterName
+		case CS_AccountRegisterID: 
+		return CS_AccountRegisterName
+		case SC_ResAccountRigsterID: 
+		return SC_ResAccountRigsterName
 		default:
 		return ""
 	}
 }
 func StringToMsgId(msgname string) uint16 {
 	switch(msgname ) {
-		case CS_LoginName: 
-		return CS_LoginID
-		case SC_ResLoginName: 
-		return SC_ResLoginID
+		case CS_AccountLoginName: 
+		return CS_AccountLoginID
+		case SC_ResAccountLoginName: 
+		return SC_ResAccountLoginID
 		case AccountInfoName: 
 		return AccountInfoID
-		case CS_RegisterName: 
-		return CS_RegisterID
-		case SC_ResRigsterName: 
-		return SC_ResRigsterID
+		case CS_AccountRegisterName: 
+		return CS_AccountRegisterID
+		case SC_ResAccountRigsterName: 
+		return SC_ResAccountRigsterID
 		default:
 		return 0
 	}
 }
 func MsgIdToType(id uint16) rune {
 	switch(id ) {
-		case CS_LoginID: 
+		case CS_AccountLoginID: 
 		return rune('C')
-		case SC_ResLoginID: 
+		case SC_ResAccountLoginID: 
 		return rune('S')
 		case AccountInfoID: 
 		return rune('A')
-		case CS_RegisterID: 
+		case CS_AccountRegisterID: 
 		return rune('C')
-		case SC_ResRigsterID: 
+		case SC_ResAccountRigsterID: 
 		return rune('S')
 		default:
 		return rune(0)
 	}
 }
-func (this *CS_Login) GetMsgId() uint16 {
-	return CS_LoginID
+func (this *CS_AccountLogin) GetMsgId() uint16 {
+	return CS_AccountLoginID
 }
-func (this *SC_ResLogin) GetMsgId() uint16 {
-	return SC_ResLoginID
+func (this *SC_ResAccountLogin) GetMsgId() uint16 {
+	return SC_ResAccountLoginID
 }
 func (this *AccountInfo) GetMsgId() uint16 {
 	return AccountInfoID
 }
-func (this *CS_Register) GetMsgId() uint16 {
-	return CS_RegisterID
+func (this *CS_AccountRegister) GetMsgId() uint16 {
+	return CS_AccountRegisterID
 }
-func (this *SC_ResRigster) GetMsgId() uint16 {
-	return SC_ResRigsterID
+func (this *SC_ResAccountRigster) GetMsgId() uint16 {
+	return SC_ResAccountRigsterID
 }
-func (this *CS_Login) GetMsgName() string {
-	return CS_LoginName
+func (this *CS_AccountLogin) GetMsgName() string {
+	return CS_AccountLoginName
 }
-func (this *SC_ResLogin) GetMsgName() string {
-	return SC_ResLoginName
+func (this *SC_ResAccountLogin) GetMsgName() string {
+	return SC_ResAccountLoginName
 }
 func (this *AccountInfo) GetMsgName() string {
 	return AccountInfoName
 }
-func (this *CS_Register) GetMsgName() string {
-	return CS_RegisterName
+func (this *CS_AccountRegister) GetMsgName() string {
+	return CS_AccountRegisterName
 }
-func (this *SC_ResRigster) GetMsgName() string {
-	return SC_ResRigsterName
+func (this *SC_ResAccountRigster) GetMsgName() string {
+	return SC_ResAccountRigsterName
 }
-func (this *CS_Login) GetSize() int {
-	return GetSizeCS_Login(this)
+func (this *CS_AccountLogin) GetSize() int {
+	return GetSizeCS_AccountLogin(this)
 }
-func (this *SC_ResLogin) GetSize() int {
-	return GetSizeSC_ResLogin(this)
+func (this *SC_ResAccountLogin) GetSize() int {
+	return GetSizeSC_ResAccountLogin(this)
 }
 func (this *AccountInfo) GetSize() int {
 	return GetSizeAccountInfo(this)
 }
-func (this *CS_Register) GetSize() int {
-	return GetSizeCS_Register(this)
+func (this *CS_AccountRegister) GetSize() int {
+	return GetSizeCS_AccountRegister(this)
 }
-func (this *SC_ResRigster) GetSize() int {
-	return GetSizeSC_ResRigster(this)
+func (this *SC_ResAccountRigster) GetSize() int {
+	return GetSizeSC_ResAccountRigster(this)
 }
-func (this *CS_Login) GetJson() string {
+func (this *CS_AccountLogin) GetJson() string {
 	json,_ := json.Marshal(this)
 	return string(json)
 }
-func (this *SC_ResLogin) GetJson() string {
+func (this *SC_ResAccountLogin) GetJson() string {
 	json,_ := json.Marshal(this)
 	return string(json)
 }
@@ -158,11 +158,11 @@ func (this *AccountInfo) GetJson() string {
 	json,_ := json.Marshal(this)
 	return string(json)
 }
-func (this *CS_Register) GetJson() string {
+func (this *CS_AccountRegister) GetJson() string {
 	json,_ := json.Marshal(this)
 	return string(json)
 }
-func (this *SC_ResRigster) GetJson() string {
+func (this *SC_ResAccountRigster) GetJson() string {
 	json,_ := json.Marshal(this)
 	return string(json)
 }
@@ -295,7 +295,7 @@ func readBinaryFloat64(data []byte) float64 {
 	bits := binary.BigEndian.Uint64(data)
 	return math.Float64frombits(bits)
 }
-func ReadMsgCS_LoginByBytes(indata []byte, obj *CS_Login) (int,*CS_Login ) {
+func ReadMsgCS_AccountLoginByBytes(indata []byte, obj *CS_AccountLogin) (int,*CS_AccountLogin ) {
 	offset := 0
 	if len(indata) < 4 {
 		return 0,nil
@@ -306,7 +306,7 @@ func ReadMsgCS_LoginByBytes(indata []byte, obj *CS_Login) (int,*CS_Login ) {
 		return 4,nil
 	}
 	if obj == nil{
-		obj=&CS_Login{}
+		obj=&CS_AccountLogin{}
 	}
 	if offset + objsize > len(indata ) {
 		return offset,obj
@@ -327,7 +327,7 @@ func ReadMsgCS_LoginByBytes(indata []byte, obj *CS_Login) (int,*CS_Login ) {
 	offset += 4 + len(obj.PassWordMD5)
 	return endpos,obj
 }
-func WriteMsgCS_LoginByObj(data []byte, obj *CS_Login) int {
+func WriteMsgCS_AccountLoginByObj(data []byte, obj *CS_AccountLogin) int {
 	if obj == nil {
 		binary.BigEndian.PutUint32(data[0:4],0)
 		return 4
@@ -342,13 +342,13 @@ func WriteMsgCS_LoginByObj(data []byte, obj *CS_Login) int {
 	offset += 4 + len(obj.PassWordMD5)
 	return offset
 }
-func GetSizeCS_Login(obj *CS_Login) int {
+func GetSizeCS_AccountLogin(obj *CS_AccountLogin) int {
 	if obj == nil {
 		return 4
 	}
 	return 4 + 4 + len(obj.LoginName) + 4 + len(obj.PassWordMD5)
 }
-func ReadMsgSC_ResLoginByBytes(indata []byte, obj *SC_ResLogin) (int,*SC_ResLogin ) {
+func ReadMsgSC_ResAccountLoginByBytes(indata []byte, obj *SC_ResAccountLogin) (int,*SC_ResAccountLogin ) {
 	offset := 0
 	if len(indata) < 4 {
 		return 0,nil
@@ -359,7 +359,7 @@ func ReadMsgSC_ResLoginByBytes(indata []byte, obj *SC_ResLogin) (int,*SC_ResLogi
 		return 4,nil
 	}
 	if obj == nil{
-		obj=&SC_ResLogin{}
+		obj=&SC_ResAccountLogin{}
 	}
 	if offset + objsize > len(indata ) {
 		return offset,obj
@@ -391,7 +391,7 @@ func ReadMsgSC_ResLoginByBytes(indata []byte, obj *SC_ResLogin) (int,*SC_ResLogi
 	offset += rsize_Account
 	return endpos,obj
 }
-func WriteMsgSC_ResLoginByObj(data []byte, obj *SC_ResLogin) int {
+func WriteMsgSC_ResAccountLoginByObj(data []byte, obj *SC_ResAccountLogin) int {
 	if obj == nil {
 		binary.BigEndian.PutUint32(data[0:4],0)
 		return 4
@@ -409,7 +409,7 @@ func WriteMsgSC_ResLoginByObj(data []byte, obj *SC_ResLogin) int {
 	offset += WriteMsgAccountInfoByObj(data[offset:], obj.Account)
 	return offset
 }
-func GetSizeSC_ResLogin(obj *SC_ResLogin) int {
+func GetSizeSC_ResAccountLogin(obj *SC_ResAccountLogin) int {
 	if obj == nil {
 		return 4
 	}
@@ -468,7 +468,7 @@ func GetSizeAccountInfo(obj *AccountInfo) int {
 	}
 	return 4 + 4 + len(obj.UUID) + 4 + len(obj.LoginName)
 }
-func ReadMsgCS_RegisterByBytes(indata []byte, obj *CS_Register) (int,*CS_Register ) {
+func ReadMsgCS_AccountRegisterByBytes(indata []byte, obj *CS_AccountRegister) (int,*CS_AccountRegister ) {
 	offset := 0
 	if len(indata) < 4 {
 		return 0,nil
@@ -479,7 +479,7 @@ func ReadMsgCS_RegisterByBytes(indata []byte, obj *CS_Register) (int,*CS_Registe
 		return 4,nil
 	}
 	if obj == nil{
-		obj=&CS_Register{}
+		obj=&CS_AccountRegister{}
 	}
 	if offset + objsize > len(indata ) {
 		return offset,obj
@@ -500,7 +500,7 @@ func ReadMsgCS_RegisterByBytes(indata []byte, obj *CS_Register) (int,*CS_Registe
 	offset += 4 + len(obj.PassWordMD5)
 	return endpos,obj
 }
-func WriteMsgCS_RegisterByObj(data []byte, obj *CS_Register) int {
+func WriteMsgCS_AccountRegisterByObj(data []byte, obj *CS_AccountRegister) int {
 	if obj == nil {
 		binary.BigEndian.PutUint32(data[0:4],0)
 		return 4
@@ -515,13 +515,13 @@ func WriteMsgCS_RegisterByObj(data []byte, obj *CS_Register) int {
 	offset += 4 + len(obj.PassWordMD5)
 	return offset
 }
-func GetSizeCS_Register(obj *CS_Register) int {
+func GetSizeCS_AccountRegister(obj *CS_AccountRegister) int {
 	if obj == nil {
 		return 4
 	}
 	return 4 + 4 + len(obj.LoginName) + 4 + len(obj.PassWordMD5)
 }
-func ReadMsgSC_ResRigsterByBytes(indata []byte, obj *SC_ResRigster) (int,*SC_ResRigster ) {
+func ReadMsgSC_ResAccountRigsterByBytes(indata []byte, obj *SC_ResAccountRigster) (int,*SC_ResAccountRigster ) {
 	offset := 0
 	if len(indata) < 4 {
 		return 0,nil
@@ -532,7 +532,7 @@ func ReadMsgSC_ResRigsterByBytes(indata []byte, obj *SC_ResRigster) (int,*SC_Res
 		return 4,nil
 	}
 	if obj == nil{
-		obj=&SC_ResRigster{}
+		obj=&SC_ResAccountRigster{}
 	}
 	if offset + objsize > len(indata ) {
 		return offset,obj
@@ -564,7 +564,7 @@ func ReadMsgSC_ResRigsterByBytes(indata []byte, obj *SC_ResRigster) (int,*SC_Res
 	offset += rsize_Account
 	return endpos,obj
 }
-func WriteMsgSC_ResRigsterByObj(data []byte, obj *SC_ResRigster) int {
+func WriteMsgSC_ResAccountRigsterByObj(data []byte, obj *SC_ResAccountRigster) int {
 	if obj == nil {
 		binary.BigEndian.PutUint32(data[0:4],0)
 		return 4
@@ -582,7 +582,7 @@ func WriteMsgSC_ResRigsterByObj(data []byte, obj *SC_ResRigster) int {
 	offset += WriteMsgAccountInfoByObj(data[offset:], obj.Account)
 	return offset
 }
-func GetSizeSC_ResRigster(obj *SC_ResRigster) int {
+func GetSizeSC_ResAccountRigster(obj *SC_ResAccountRigster) int {
 	if obj == nil {
 		return 4
 	}

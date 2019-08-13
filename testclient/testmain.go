@@ -1,7 +1,6 @@
 package main
 
 import (
-	"command"
 	"fmt"
 	"github.com/liasece/micserver/log"
 	"time"
@@ -13,6 +12,7 @@ func main() {
 	for i := 0; i < threadsum; i++ {
 		client := &Client{
 			LoginName: fmt.Sprintf("Jansen%d", i+1),
+			Passwd:    "testpsw99876",
 		}
 		client.Logger = log.GetDefaultLogger().Clone()
 		client.Logger.SetLogName("client")
@@ -20,10 +20,7 @@ func main() {
 		if err != nil {
 			continue
 		}
-		client.Conn.SendCmd(&command.CS_Register{
-			LoginName:   client.LoginName,
-			PassWordMD5: "psw123456",
-		})
+		client.Conn.SendCmd(client.GetRegsiterMsg())
 		time.Sleep(time.Millisecond * 4)
 		stopchan <- struct{}{}
 	}

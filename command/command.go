@@ -2,12 +2,12 @@ package command
 
 import ()
 
-type CS_Login struct {
+type CS_AccountLogin struct {
 	LoginName   string
 	PassWordMD5 string
 }
 
-type SC_ResLogin struct {
+type SC_ResAccountLogin struct {
 	// 0 为成功
 	Code      int32
 	Message   string
@@ -20,12 +20,12 @@ type AccountInfo struct {
 	LoginName string
 }
 
-type CS_Register struct {
+type CS_AccountRegister struct {
 	LoginName   string
 	PassWordMD5 string
 }
 
-type SC_ResRigster struct {
+type SC_ResAccountRigster struct {
 	// 0 为成功
 	Code      int32
 	Message   string

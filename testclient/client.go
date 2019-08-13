@@ -14,27 +14,39 @@ type Client struct {
 	*log.Logger
 	Conn      *tcpconn.ClientConn
 	LoginName string
+	Passwd    string
 }
 
 func (this *Client) OnRecvSocketPackage(msgbinary *msg.MessageBinary) {
 	this.Debug("收到消息 %d", msgbinary.CmdID)
 	switch msgbinary.CmdID {
-	case command.SC_ResLoginID:
-		msg := &command.SC_ResLogin{}
+	case command.SC_ResAccountLoginID:
+		msg := &command.SC_ResAccountLogin{}
 		msg.ReadBinary(msgbinary.ProtoData)
 		this.OnResLogin(msg)
-	case command.SC_ResRigsterID:
-		msg := &command.SC_ResRigster{}
+	case command.SC_ResAccountRigsterID:
+		msg := &command.SC_ResAccountRigster{}
 		msg.ReadBinary(msgbinary.ProtoData)
 		this.OnResRigster(msg)
 	}
 }
 
-func (this *Client) OnResRigster(msg *command.SC_ResRigster) {
-	this.Conn.SendCmd(&command.CS_Login{
-		LoginName:   this.LoginName,
-		PassWordMD5: "psw123456",
-	})
+func (this *Client) GetLoginMsg() *command.CS_AccountLogin {
+	res := &command.CS_AccountLogin{}
+	res.LoginName = this.LoginName
+	res.PassWordMD5 = util.HmacSha256ByString(this.Passwd, this.LoginName)
+	return res
+}
+
+func (this *Client) GetRegsiterMsg() *command.CS_AccountRegister {
+	res := &command.CS_AccountRegister{}
+	res.LoginName = this.LoginName
+	res.PassWordMD5 = util.HmacSha256ByString(this.Passwd, this.LoginName)
+	return res
+}
+
+func (this *Client) OnResRigster(msg *command.SC_ResAccountRigster) {
+	this.Conn.SendCmd(this.GetLoginMsg())
 	if msg.Code != 0 {
 		this.Error("注册账号失败 %s", msg.GetJson())
 		return
@@ -45,7 +57,7 @@ func (this *Client) OnResRigster(msg *command.SC_ResRigster) {
 	}
 }
 
-func (this *Client) OnResLogin(msg *command.SC_ResLogin) {
+func (this *Client) OnResLogin(msg *command.SC_ResAccountLogin) {
 	if msg.Code != 0 {
 		this.Error("登陆失败 %s", msg.GetJson())
 		return

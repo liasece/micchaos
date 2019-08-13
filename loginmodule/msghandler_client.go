@@ -46,8 +46,8 @@ func (this *HandlerClient) OnRecvClientMsg(smsg *servercomm.SForwardFromGate) {
 }
 
 // 注册账号
-func (this *HandlerClient) OnCS_Register(smsg *servercomm.SForwardFromGate) {
-	msg := &command.CS_Register{}
+func (this *HandlerClient) OnCS_AccountRegister(smsg *servercomm.SForwardFromGate) {
+	msg := &command.CS_AccountRegister{}
 	msg.ReadBinary(smsg.Data)
 	this.Debug("玩家请求注册 %s", msg.GetJson())
 	tmpuuid, err := util.NewUniqueID(101)
@@ -84,7 +84,7 @@ func (this *HandlerClient) OnCS_Register(smsg *servercomm.SForwardFromGate) {
 		} else {
 			this.Info("目标玩家已经存在了，创建账号失败，已存在玩家的UUID[%s]",
 				confirm.Account.UUID)
-			send := &command.SC_ResRigster{
+			send := &command.SC_ResAccountRigster{
 				Code:      1,
 				Message:   "目标用户名已存在",
 				ConnectID: smsg.ClientConnID,
@@ -95,8 +95,8 @@ func (this *HandlerClient) OnCS_Register(smsg *servercomm.SForwardFromGate) {
 }
 
 // 玩家登陆
-func (this *HandlerClient) OnCS_Login(smsg *servercomm.SForwardFromGate) {
-	msg := &command.CS_Login{}
+func (this *HandlerClient) OnCS_AccountLogin(smsg *servercomm.SForwardFromGate) {
+	msg := &command.CS_AccountLogin{}
 	msg.ReadBinary(smsg.Data)
 	this.Info("command.CS_Login: %s", msg.GetJson())
 	tmpplayer := &TmpPlayer{}
@@ -105,7 +105,7 @@ func (this *HandlerClient) OnCS_Login(smsg *servercomm.SForwardFromGate) {
 	if err != nil {
 		// 登陆失败
 		this.Error("登陆失败 Err[%s] ReqJson[%s]", err.Error(), msg.GetJson())
-		send := &command.SC_ResLogin{
+		send := &command.SC_ResAccountLogin{
 			Code:      1,
 			Message:   "目标账号不存在",
 			ConnectID: smsg.ClientConnID,
@@ -117,7 +117,7 @@ func (this *HandlerClient) OnCS_Login(smsg *servercomm.SForwardFromGate) {
 		if tmpplayer.Account.PassWordMD5WS != pswmd5ws {
 			// 密码错误
 			this.Info("登陆失败 密码错误 ReqJson[%s]", msg.GetJson())
-			send := &command.SC_ResLogin{
+			send := &command.SC_ResAccountLogin{
 				Code:      1,
 				Message:   "密码错误",
 				ConnectID: smsg.ClientConnID,
@@ -130,7 +130,7 @@ func (this *HandlerClient) OnCS_Login(smsg *servercomm.SForwardFromGate) {
 				tmpplayer.Account.PhoneNumber,
 				tmpplayer.Account.PassWordMD5WS,
 				tmpplayer.Account.PassWordMD5WSSalt)
-			send := &command.SC_ResLogin{
+			send := &command.SC_ResAccountLogin{
 				Code:      0,
 				Message:   "login secess",
 				ConnectID: smsg.ClientConnID,

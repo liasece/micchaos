@@ -52,9 +52,9 @@ func (this *GatewayModule) HandleClientSocketMsg(
 
 func (this *GatewayModule) HandleServerMsg(smsg *servercomm.SForwardToServer) {
 	switch smsg.MsgName {
-	case "command.SC_ResLogin":
+	case "command.SC_ResAccountLogin":
 		{
-			msg := &command.SC_ResLogin{}
+			msg := &command.SC_ResAccountLogin{}
 			msg.ReadBinary(smsg.Data)
 			if msg.Code == 0 {
 				client := this.GetClientConn(msg.ConnectID)
