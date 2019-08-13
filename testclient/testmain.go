@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/liasece/micserver/log"
+	"testclient/client"
 	"time"
 )
 
@@ -10,17 +11,13 @@ func main() {
 	threadsum := 1
 	stopchan := make(chan struct{}, threadsum)
 	for i := 0; i < threadsum; i++ {
-		client := &Client{
-			LoginName: fmt.Sprintf("Jansen%d", i+1),
-			Passwd:    "testpsw99876",
-		}
-		client.Logger = log.GetDefaultLogger().Clone()
-		client.Logger.SetLogName("client")
-		err := client.Dial(":11002")
+		c := &client.Client{}
+		c.Init(fmt.Sprintf("Jansen%d", i+1), "testpsw99876")
+		err := c.Dial(":11002")
 		if err != nil {
 			continue
 		}
-		client.Conn.SendCmd(client.GetRegsiterMsg())
+		c.Conn.SendCmd(c.GetRegsiterMsg())
 		time.Sleep(time.Millisecond * 4)
 		stopchan <- struct{}{}
 	}

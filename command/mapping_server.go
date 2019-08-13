@@ -8,8 +8,11 @@ var mapping map[string]string
 
 func init() {
 	mapping = make(map[string]string)
+
 	ToLogin(&CS_AccountLogin{})
 	ToLogin(&CS_AccountRegister{})
+
+	ToPlayer(&CS_EnterGame{})
 }
 
 func GetServerTypeByID(id uint16) string {

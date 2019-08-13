@@ -1,4 +1,4 @@
-package main
+package client
 
 import (
 	"command"
@@ -12,22 +12,27 @@ import (
 
 type Client struct {
 	*log.Logger
-	Conn      *tcpconn.ClientConn
-	LoginName string
-	Passwd    string
+	Conn       *tcpconn.ClientConn
+	LoginName  string
+	Passwd     string
+	CmdHandler CmdHandler
+}
+
+func (this *Client) Init(name, passwd string) {
+	this.LoginName = name
+	this.Passwd = passwd
+	this.Logger = log.GetDefaultLogger().Clone()
+	this.Logger.SetLogName("client")
+	this.CmdHandler.Init(this)
 }
 
 func (this *Client) OnRecvSocketPackage(msgbinary *msg.MessageBinary) {
-	this.Debug("收到消息 %d", msgbinary.CmdID)
-	switch msgbinary.CmdID {
-	case command.SC_ResAccountLoginID:
-		msg := &command.SC_ResAccountLogin{}
-		msg.ReadBinary(msgbinary.ProtoData)
-		this.OnResLogin(msg)
-	case command.SC_ResAccountRigsterID:
-		msg := &command.SC_ResAccountRigster{}
-		msg.ReadBinary(msgbinary.ProtoData)
-		this.OnResRigster(msg)
+	msgname := command.MsgIdToString(msgbinary.CmdID)
+	this.Debug("收到消息 %s", msgname)
+	if f, ok := this.CmdHandler.mappingFunc[msgname]; ok {
+		f(msgbinary)
+	} else {
+		this.Error("未知的消息 %d:%s", msgbinary.CmdID, msgname)
 	}
 }
 
@@ -43,29 +48,6 @@ func (this *Client) GetRegsiterMsg() *command.CS_AccountRegister {
 	res.LoginName = this.LoginName
 	res.PassWordMD5 = util.HmacSha256ByString(this.Passwd, this.LoginName)
 	return res
-}
-
-func (this *Client) OnResRigster(msg *command.SC_ResAccountRigster) {
-	this.Conn.SendCmd(this.GetLoginMsg())
-	if msg.Code != 0 {
-		this.Error("注册账号失败 %s", msg.GetJson())
-		return
-	}
-	this.Info("注册成功 %s", msg.GetJson())
-	if msg.Account.LoginName != "" {
-		this.Logger.SetLogName(msg.Account.LoginName)
-	}
-}
-
-func (this *Client) OnResLogin(msg *command.SC_ResAccountLogin) {
-	if msg.Code != 0 {
-		this.Error("登陆失败 %s", msg.GetJson())
-		return
-	}
-	this.Info("登陆成功 %s", msg.GetJson())
-	if msg.Account.LoginName != "" {
-		this.Logger.SetLogName(msg.Account.LoginName)
-	}
 }
 
 func (this *Client) Dial(addr string) error {
