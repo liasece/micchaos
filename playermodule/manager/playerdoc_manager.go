@@ -2,6 +2,7 @@ package manager
 
 import (
 	"github.com/liasece/micserver/log"
+	"github.com/liasece/micserver/module"
 	"go.mongodb.org/mongo-driver/bson"
 	"mongodb"
 	"playermodule/boxes"
@@ -10,11 +11,15 @@ import (
 
 type PlayerDocManager struct {
 	*log.Logger
+
+	mod             *module.BaseModule
 	docs            sync.Map
 	mongo_userinfos *mongodb.UserInfos
 }
 
-func (this *PlayerDocManager) Init(userinfos *mongodb.UserInfos) {
+func (this *PlayerDocManager) Init(mod *module.BaseModule,
+	userinfos *mongodb.UserInfos) {
+	this.mod = mod
 	this.mongo_userinfos = userinfos
 }
 
@@ -52,6 +57,7 @@ func (this *PlayerDocManager) getPlayerFromDB(uuid string) *boxes.Player {
 		return nil
 	}
 	readPlayer.Logger = this.Logger.Clone()
+	readPlayer.Init(this.mod)
 	readPlayer.AfterLoad()
 	return readPlayer
 }

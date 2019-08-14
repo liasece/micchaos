@@ -7,7 +7,10 @@ import (
 )
 
 func main() {
+	// 初始化性能监控
 	util.BindPprof("", 8888)
+
+	// 初始化 MicServer
 	app, err := micserver.CreateApp(GetInitManger().GetConfigPath(),
 		GetInitManger().GetProgramModuleList())
 	if err != nil {
@@ -15,5 +18,6 @@ func main() {
 		return
 	}
 
+	// app 开始运行 阻塞
 	app.Run()
 }

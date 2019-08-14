@@ -58,7 +58,7 @@ func (this *HandlerClient) OnRecvClientMsg(smsg *servercomm.SForwardFromGate) {
 func (this *HandlerClient) OnCS_EnterGame(smsg *servercomm.SForwardFromGate) {
 	msg := &command.CS_EnterGame{}
 	msg.ReadBinary(smsg.Data)
-	this.Info("收到 %s", msg.GetJson())
+	this.Info("收到 %s", smsg.GetJson())
 	player := this.PlayerDocManager.GetPlayerDocMust(smsg.Session["UUID"])
 	if player != nil {
 		player.AfterOnline(smsg.Session)

@@ -41,5 +41,5 @@ type SC_ResAccountRigster struct {
 type CS_EnterGame struct {
 }
 
-type SC_RedEnterGame struct {
+type SC_ResEnterGame struct {
 }

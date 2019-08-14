@@ -61,6 +61,8 @@ func (this *GatewayModule) HandleServerMsg(smsg *servercomm.SForwardToServer) {
 				if client != nil {
 					client.SetVertify(true)
 					client.Session["UUID"] = msg.Account.UUID
+					client.Session["connectid"] = client.Tempid
+					client.Session["gate"] = this.GetModuleID()
 					this.Info("[gate] 用户登陆成功 %s", msg.GetJson())
 				}
 			}

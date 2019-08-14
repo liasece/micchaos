@@ -50,7 +50,7 @@ func (this *PlayerModule) AfterInitModule() {
 	// 	this.Error("mongo_userinfos.Upsert err:%s", err.Error())
 	// }
 
-	this.PlayerDocManager.Init(this.mongo_userinfos)
+	this.PlayerDocManager.Init(&this.BaseModule, this.mongo_userinfos)
 	this.PlayerDocManager.Logger = this.Logger
 
 	// 系统事件监听初始化

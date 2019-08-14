@@ -11,7 +11,7 @@ const (
 	CS_AccountRegisterID = 39
 	SC_ResAccountRigsterID = 40
 	CS_EnterGameID = 41
-	SC_RedEnterGameID = 42
+	SC_ResEnterGameID = 42
 )
 const (
 	AccountInfoName = "command.AccountInfo"
@@ -20,7 +20,7 @@ const (
 	CS_AccountRegisterName = "command.CS_AccountRegister"
 	SC_ResAccountRigsterName = "command.SC_ResAccountRigster"
 	CS_EnterGameName = "command.CS_EnterGame"
-	SC_RedEnterGameName = "command.SC_RedEnterGame"
+	SC_ResEnterGameName = "command.SC_ResEnterGame"
 )
 func (this *AccountInfo) WriteBinary(data []byte) int {
 	return WriteMsgAccountInfoByObj(data,this)
@@ -40,8 +40,8 @@ func (this *SC_ResAccountRigster) WriteBinary(data []byte) int {
 func (this *CS_EnterGame) WriteBinary(data []byte) int {
 	return WriteMsgCS_EnterGameByObj(data,this)
 }
-func (this *SC_RedEnterGame) WriteBinary(data []byte) int {
-	return WriteMsgSC_RedEnterGameByObj(data,this)
+func (this *SC_ResEnterGame) WriteBinary(data []byte) int {
+	return WriteMsgSC_ResEnterGameByObj(data,this)
 }
 func (this *AccountInfo) ReadBinary(data []byte) int {
 	size,_ := ReadMsgAccountInfoByBytes(data, this)
@@ -67,8 +67,8 @@ func (this *CS_EnterGame) ReadBinary(data []byte) int {
 	size,_ := ReadMsgCS_EnterGameByBytes(data, this)
 	return size
 }
-func (this *SC_RedEnterGame) ReadBinary(data []byte) int {
-	size,_ := ReadMsgSC_RedEnterGameByBytes(data, this)
+func (this *SC_ResEnterGame) ReadBinary(data []byte) int {
+	size,_ := ReadMsgSC_ResEnterGameByBytes(data, this)
 	return size
 }
 func MsgIdToString(id uint16) string {
@@ -85,8 +85,8 @@ func MsgIdToString(id uint16) string {
 		return SC_ResAccountRigsterName
 		case CS_EnterGameID: 
 		return CS_EnterGameName
-		case SC_RedEnterGameID: 
-		return SC_RedEnterGameName
+		case SC_ResEnterGameID: 
+		return SC_ResEnterGameName
 		default:
 		return ""
 	}
@@ -105,8 +105,8 @@ func StringToMsgId(msgname string) uint16 {
 		return SC_ResAccountRigsterID
 		case CS_EnterGameName: 
 		return CS_EnterGameID
-		case SC_RedEnterGameName: 
-		return SC_RedEnterGameID
+		case SC_ResEnterGameName: 
+		return SC_ResEnterGameID
 		default:
 		return 0
 	}
@@ -125,7 +125,7 @@ func MsgIdToType(id uint16) rune {
 		return rune('S')
 		case CS_EnterGameID: 
 		return rune('C')
-		case SC_RedEnterGameID: 
+		case SC_ResEnterGameID: 
 		return rune('S')
 		default:
 		return rune(0)
@@ -149,8 +149,8 @@ func (this *SC_ResAccountRigster) GetMsgId() uint16 {
 func (this *CS_EnterGame) GetMsgId() uint16 {
 	return CS_EnterGameID
 }
-func (this *SC_RedEnterGame) GetMsgId() uint16 {
-	return SC_RedEnterGameID
+func (this *SC_ResEnterGame) GetMsgId() uint16 {
+	return SC_ResEnterGameID
 }
 func (this *AccountInfo) GetMsgName() string {
 	return AccountInfoName
@@ -170,8 +170,8 @@ func (this *SC_ResAccountRigster) GetMsgName() string {
 func (this *CS_EnterGame) GetMsgName() string {
 	return CS_EnterGameName
 }
-func (this *SC_RedEnterGame) GetMsgName() string {
-	return SC_RedEnterGameName
+func (this *SC_ResEnterGame) GetMsgName() string {
+	return SC_ResEnterGameName
 }
 func (this *AccountInfo) GetSize() int {
 	return GetSizeAccountInfo(this)
@@ -191,8 +191,8 @@ func (this *SC_ResAccountRigster) GetSize() int {
 func (this *CS_EnterGame) GetSize() int {
 	return GetSizeCS_EnterGame(this)
 }
-func (this *SC_RedEnterGame) GetSize() int {
-	return GetSizeSC_RedEnterGame(this)
+func (this *SC_ResEnterGame) GetSize() int {
+	return GetSizeSC_ResEnterGame(this)
 }
 func (this *AccountInfo) GetJson() string {
 	json,_ := json.Marshal(this)
@@ -218,7 +218,7 @@ func (this *CS_EnterGame) GetJson() string {
 	json,_ := json.Marshal(this)
 	return string(json)
 }
-func (this *SC_RedEnterGame) GetJson() string {
+func (this *SC_ResEnterGame) GetJson() string {
 	json,_ := json.Marshal(this)
 	return string(json)
 }
@@ -680,7 +680,7 @@ func GetSizeCS_EnterGame(obj *CS_EnterGame) int {
 	}
 	return 4 + 0
 }
-func ReadMsgSC_RedEnterGameByBytes(indata []byte, obj *SC_RedEnterGame) (int,*SC_RedEnterGame ) {
+func ReadMsgSC_ResEnterGameByBytes(indata []byte, obj *SC_ResEnterGame) (int,*SC_ResEnterGame ) {
 	offset := 0
 	if len(indata) < 4 {
 		return 0,nil
@@ -691,7 +691,7 @@ func ReadMsgSC_RedEnterGameByBytes(indata []byte, obj *SC_RedEnterGame) (int,*SC
 		return 4,nil
 	}
 	if obj == nil{
-		obj=&SC_RedEnterGame{}
+		obj=&SC_ResEnterGame{}
 	}
 	if offset + objsize > len(indata ) {
 		return offset,obj
@@ -699,7 +699,7 @@ func ReadMsgSC_RedEnterGameByBytes(indata []byte, obj *SC_RedEnterGame) (int,*SC
 	endpos := offset+objsize
 	return endpos,obj
 }
-func WriteMsgSC_RedEnterGameByObj(data []byte, obj *SC_RedEnterGame) int {
+func WriteMsgSC_ResEnterGameByObj(data []byte, obj *SC_ResEnterGame) int {
 	if obj == nil {
 		binary.BigEndian.PutUint32(data[0:4],0)
 		return 4
@@ -710,7 +710,7 @@ func WriteMsgSC_RedEnterGameByObj(data []byte, obj *SC_RedEnterGame) int {
 	offset += 4
 	return offset
 }
-func GetSizeSC_RedEnterGame(obj *SC_RedEnterGame) int {
+func GetSizeSC_ResEnterGame(obj *SC_ResEnterGame) int {
 	if obj == nil {
 		return 4
 	}
