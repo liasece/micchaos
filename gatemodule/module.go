@@ -2,10 +2,10 @@ package gatemodule
 
 import (
 	"command"
+	"github.com/liasece/micserver/connect"
 	"github.com/liasece/micserver/module"
 	"github.com/liasece/micserver/msg"
 	"github.com/liasece/micserver/servercomm"
-	"github.com/liasece/micserver/tcpconn"
 )
 
 type GatewayModule struct {
@@ -30,7 +30,7 @@ func (this *GatewayModule) AfterInitModule() {
 }
 
 func (this *GatewayModule) HandleClientSocketMsg(
-	conn *tcpconn.ClientConn, msgbin *msg.MessageBinary) {
+	conn *connect.ClientConn, msgbin *msg.MessageBinary) {
 	this.Debug("收到TCP消息")
 	msgname := command.MsgIdToString(msgbin.MessageBinaryHeadL2.CmdID)
 	servertype := command.GetServerTypeByMsgName(msgname)

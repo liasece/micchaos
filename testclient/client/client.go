@@ -2,9 +2,9 @@ package client
 
 import (
 	"command"
+	"github.com/liasece/micserver/connect"
 	"github.com/liasece/micserver/log"
 	"github.com/liasece/micserver/msg"
-	"github.com/liasece/micserver/tcpconn"
 	"github.com/liasece/micserver/util"
 	"io"
 	"time"
@@ -12,7 +12,7 @@ import (
 
 type Client struct {
 	*log.Logger
-	Conn       *tcpconn.ClientConn
+	Conn       *connect.ClientConn
 	LoginName  string
 	Passwd     string
 	CmdHandler CmdHandler
@@ -51,9 +51,9 @@ func (this *Client) GetRegsiterMsg() *command.CS_AccountRegister {
 }
 
 func (this *Client) Dial(addr string) error {
-	conn, err := tcpconn.ClientDial(addr)
+	conn, err := connect.ClientDial(addr)
 	if err != nil {
-		this.Error("tcpconn.ClientDial(%s) err:%s", addr, err.Error())
+		this.Error("connect.ClientDial(%s) err:%s", addr, err.Error())
 		return err
 	} else {
 		this.Debug("链接成功")
