@@ -2,18 +2,18 @@ package client
 
 import (
 	"command"
-	"github.com/liasece/micserver/msg"
+	"encoding/json"
 	"reflect"
 )
 
 type CmdHandler struct {
 	*Client
-	mappingFunc map[string]func(msgbinary *msg.MessageBinary)
+	mappingFunc map[string]func(data []byte)
 }
 
 func (this *CmdHandler) Init(c *Client) {
 	this.Client = c
-	this.mappingFunc = make(map[string]func(msgbinary *msg.MessageBinary))
+	this.mappingFunc = make(map[string]func(data []byte))
 	// 创建消息处理消息的映射
 	hf := reflect.ValueOf(this)
 	hft := hf.Type()
@@ -26,40 +26,40 @@ func (this *CmdHandler) Init(c *Client) {
 		// 计算方法名对应的消息名
 		msgName := "command." + funcName[2:]
 		this.mappingFunc[msgName] =
-			hf.Method(i).Interface().(func(msgbinary *msg.MessageBinary))
+			hf.Method(i).Interface().(func(data []byte))
 	}
 }
 
 // 注册账号的回复信息
-func (this *CmdHandler) OnSC_ResAccountRigster(msgbinary *msg.MessageBinary) {
+func (this *CmdHandler) OnSC_ResAccountRigster(data []byte) {
 	msg := &command.SC_ResAccountRigster{}
-	msg.ReadBinary(msgbinary.ProtoData)
+	json.Unmarshal(data, msg)
 
 	if msg.Code != 0 {
-		this.Error("注册账号失败 %s", msg.GetJson())
+		this.Error("注册账号失败 %s", string(data))
 	} else {
-		this.Info("注册成功 %s", msg.GetJson())
+		this.Info("注册成功 %s", string(data))
 		if msg.Account.LoginName != "" {
 			this.Logger.SetLogName(msg.Account.LoginName)
 		}
 	}
 	// 登陆
-	this.Conn.SendCmd(this.GetLoginMsg())
+	this.SendMsg(this.GetLoginMsg())
 }
 
 // 登陆账号的回复信息
-func (this *CmdHandler) OnSC_ResAccountLogin(msgbinary *msg.MessageBinary) {
+func (this *CmdHandler) OnSC_ResAccountLogin(data []byte) {
 	msg := &command.SC_ResAccountLogin{}
-	msg.ReadBinary(msgbinary.ProtoData)
+	json.Unmarshal(data, msg)
 
 	if msg.Code != 0 {
-		this.Error("登陆失败 %s", msg.GetJson())
+		this.Error("登陆失败 %s", string(data))
 		return
 	}
 	if msg.Account.LoginName != "" {
 		this.Logger.SetLogName(msg.Account.LoginName)
 	}
-	this.Info("登陆成功 %s", msg.GetJson())
+	this.Info("登陆成功 %s", string(data))
 	// 进入游戏
-	this.Conn.SendCmd(&command.CS_EnterGame{})
+	this.SendMsg(&command.CS_EnterGame{})
 }

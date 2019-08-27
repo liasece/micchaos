@@ -1,7 +1,7 @@
 package command
 
 import (
-	"github.com/liasece/micserver/msg"
+	"reflect"
 )
 
 var mapping map[string]string
@@ -15,18 +15,22 @@ func init() {
 	ToPlayer(&CS_EnterGame{})
 }
 
-func GetServerTypeByID(id uint16) string {
-	return GetServerTypeByMsgName(MsgIdToString(id))
-}
-
 func GetServerTypeByMsgName(msgname string) string {
 	return mapping[msgname]
 }
 
-func ToPlayer(m msg.MsgStruct) {
-	mapping[m.GetMsgName()] = "player"
+func ToPlayer(m interface{}) {
+	msgname := reflect.TypeOf(m).String()
+	if msgname[0] == '*' {
+		msgname = msgname[1:]
+	}
+	mapping[msgname] = "player"
 }
 
-func ToLogin(m msg.MsgStruct) {
-	mapping[m.GetMsgName()] = "login"
+func ToLogin(m interface{}) {
+	msgname := reflect.TypeOf(m).String()
+	if msgname[0] == '*' {
+		msgname = msgname[1:]
+	}
+	mapping[msgname] = "login"
 }

@@ -4,7 +4,6 @@ import (
 	"command"
 	"github.com/liasece/micserver/log"
 	"github.com/liasece/micserver/module"
-	"github.com/liasece/micserver/msg"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -42,11 +41,8 @@ func (this *Player) AfterOnline(session Session) {
 	this.SendMsg(send)
 }
 
-func (this *Player) SendMsg(msgstr msg.MsgStruct) {
-	if this.Session == nil {
-		this.Debug("this.Session == nil")
-		return
-	}
-	this.mod.SendMsgToClient(this.Session.Get("gate"),
-		this.Session.Get("connectid"), msgstr)
+func (this *Player) SendMsg(msg interface{}) {
+	btop := command.GetSCTopLayer(msg)
+	this.mod.SendBytesToClient(this.Session.Get("gate"),
+		this.Session.Get("connectid"), 0, btop)
 }

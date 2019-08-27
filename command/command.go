@@ -1,6 +1,45 @@
 package command
 
-import ()
+import (
+	"encoding/json"
+	"reflect"
+)
+
+func GetCSTopLayer(msg interface{}) []byte {
+	b, _ := json.Marshal(msg)
+	top := &CS_TopLayer{
+		MsgName: reflect.TypeOf(msg).String(),
+		Data:    b,
+	}
+	if top.MsgName[0] == '*' {
+		top.MsgName = top.MsgName[1:]
+	}
+	btop, _ := json.Marshal(top)
+	return btop
+}
+
+func GetSCTopLayer(msg interface{}) []byte {
+	b, _ := json.Marshal(msg)
+	top := &SC_TopLayer{
+		MsgName: reflect.TypeOf(msg).String(),
+		Data:    b,
+	}
+	if top.MsgName[0] == '*' {
+		top.MsgName = top.MsgName[1:]
+	}
+	btop, _ := json.Marshal(top)
+	return btop
+}
+
+type SC_TopLayer struct {
+	MsgName string
+	Data    []byte
+}
+
+type CS_TopLayer struct {
+	MsgName string
+	Data    []byte
+}
 
 // 账号信息
 type AccountInfo struct {

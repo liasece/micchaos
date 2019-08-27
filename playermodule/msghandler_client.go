@@ -2,7 +2,9 @@ package playermodule
 
 import (
 	"command"
+	"encoding/json"
 	"github.com/liasece/micserver/servercomm"
+	"playermodule/boxes"
 	"reflect"
 	"time"
 )
@@ -12,12 +14,12 @@ type HandlerClient struct {
 
 	lastCheckTime int64
 	msgCount      int64
-	mappingFunc   map[string]func(smsg *servercomm.SForwardFromGate)
+	mappingFunc   map[string]func(session boxes.Session, data []byte)
 }
 
 func (this *HandlerClient) Init(mod *PlayerModule) {
 	this.PlayerModule = mod
-	this.mappingFunc = make(map[string]func(smsg *servercomm.SForwardFromGate))
+	this.mappingFunc = make(map[string]func(session boxes.Session, data []byte))
 	// 创建消息处理消息的映射
 	hf := reflect.ValueOf(this)
 	hft := hf.Type()
@@ -30,14 +32,16 @@ func (this *HandlerClient) Init(mod *PlayerModule) {
 		// 计算方法名对应的消息名
 		msgName := "command." + funcName[2:]
 		this.mappingFunc[msgName] =
-			hf.Method(i).Interface().(func(smsg *servercomm.SForwardFromGate))
+			hf.Method(i).Interface().(func(session boxes.Session, data []byte))
 	}
 }
 
 //
 func (this *HandlerClient) OnRecvClientMsg(smsg *servercomm.SForwardFromGate) {
+	top := &command.CS_TopLayer{}
+	json.Unmarshal(smsg.Data, top)
 	this.Info("[HandlerClient.OnRecvClientMsg] 收到 Client 消息 %s",
-		smsg.MsgName)
+		top.MsgName)
 	this.msgCount++
 	now := time.Now().UnixNano()
 	if now-this.lastCheckTime > 1*1000*1000*1000 {
@@ -47,22 +51,22 @@ func (this *HandlerClient) OnRecvClientMsg(smsg *servercomm.SForwardFromGate) {
 		}
 		this.msgCount = 0
 	}
-	if f, ok := this.mappingFunc[smsg.MsgName]; ok {
-		f(smsg)
+	if f, ok := this.mappingFunc[top.MsgName]; ok {
+		f(smsg.Session, top.Data)
 	} else {
-		this.Error("未知的消息 %s", smsg.MsgName)
+		this.Error("未知的消息 %s", top.MsgName)
 	}
 }
 
 // 客户端请求进入游戏
-func (this *HandlerClient) OnCS_EnterGame(smsg *servercomm.SForwardFromGate) {
+func (this *HandlerClient) OnCS_EnterGame(session boxes.Session, data []byte) {
 	msg := &command.CS_EnterGame{}
-	msg.ReadBinary(smsg.Data)
-	this.Info("收到 %s", smsg.GetJson())
-	player := this.PlayerDocManager.GetPlayerDocMust(smsg.Session["UUID"])
+	json.Unmarshal(data, msg)
+	this.Info("收到 %s", string(data))
+	player := this.PlayerDocManager.GetPlayerDocMust(session["UUID"])
 	if player != nil {
-		player.AfterOnline(smsg.Session)
+		player.AfterOnline(session)
 	} else {
-		this.Error("获取Player失败 %s", smsg.GetJson())
+		this.Error("获取Player失败 %+v", session)
 	}
 }

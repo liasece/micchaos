@@ -17,7 +17,7 @@ func main() {
 		if err != nil {
 			continue
 		}
-		c.Conn.SendCmd(c.GetRegsiterMsg())
+		c.SendMsg(c.GetRegsiterMsg())
 		time.Sleep(time.Millisecond * 4)
 		stopchan <- struct{}{}
 	}

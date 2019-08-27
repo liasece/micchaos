@@ -2,6 +2,7 @@ package client
 
 import (
 	"command"
+	"encoding/json"
 	"github.com/liasece/micserver/connect"
 	"github.com/liasece/micserver/log"
 	"github.com/liasece/micserver/msg"
@@ -26,12 +27,13 @@ func (this *Client) Init(name, passwd string) {
 
 func (this *Client) onConnectRecv(conn *connect.ClientConn,
 	msgbinary *msg.MessageBinary) {
-	msgname := command.MsgIdToString(msgbinary.CmdID)
-	this.Debug("收到消息 %s", msgname)
-	if f, ok := this.CmdHandler.mappingFunc[msgname]; ok {
-		f(msgbinary)
+	topmsg := &command.SC_TopLayer{}
+	json.Unmarshal(msgbinary.ProtoData, topmsg)
+	this.Debug("收到消息 %s", topmsg.MsgName)
+	if f, ok := this.CmdHandler.mappingFunc[topmsg.MsgName]; ok {
+		f(topmsg.Data)
 	} else {
-		this.Error("未知的消息 %d:%s", msgbinary.CmdID, msgname)
+		this.Error("未知的消息 MsgName[%s]", topmsg.MsgName)
 	}
 }
 
@@ -60,4 +62,9 @@ func (this *Client) Dial(addr string) error {
 	this.Conn = conn
 
 	return nil
+}
+
+func (this *Client) SendMsg(msg interface{}) {
+	btop := command.GetCSTopLayer(msg)
+	this.Conn.SendBytes(0, btop)
 }
