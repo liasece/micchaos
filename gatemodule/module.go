@@ -32,7 +32,7 @@ func (this *GatewayModule) AfterInitModule() {
 func (this *GatewayModule) HandleClientSocketMsg(
 	conn *connect.ClientConn, msgbin *msg.MessageBinary) {
 	this.Debug("收到TCP消息")
-	msgname := command.MsgIdToString(msgbin.MessageBinaryHeadL2.CmdID)
+	msgname := command.MsgIdToString(msgbin.CmdID)
 	servertype := command.GetServerTypeByMsgName(msgname)
 	serverid := conn.Session[servertype]
 	if serverid == "" {
