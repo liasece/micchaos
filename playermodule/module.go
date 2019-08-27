@@ -39,20 +39,9 @@ func (this *PlayerModule) AfterInitModule() {
 		}
 	}
 
-	// player := &boxes.Player{
-	// 	Account: boxes.Account{
-	// 		UUID: "13412341",
-	// 	},
-	// 	Name: "jansen",
-	// }
-	// _, err := this.mongo_userinfos.Upsert(player)
-	// if err != nil {
-	// 	this.Error("mongo_userinfos.Upsert err:%s", err.Error())
-	// }
-
 	this.PlayerDocManager.Init(&this.BaseModule, this.mongo_userinfos)
 	this.PlayerDocManager.Logger = this.Logger
 
-	this.RegForwardToServer(this.HandlerServer.OnRecvServerMsg)
-	this.RegForwardFromGate(this.HandlerServer.OnRecvGateMsg)
+	this.RegForwardToServer(this.HandlerServer.OnForwardToServer)
+	this.RegForwardFromGate(this.HandlerServer.OnForwardFromGate)
 }

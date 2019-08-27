@@ -36,6 +36,6 @@ func (this *LoginModule) AfterInitModule() {
 		}
 	}
 
-	this.RegForwardFromGate(this.HandlerServer.OnRecvGateMsg)
-	this.RegForwardToServer(this.HandlerServer.OnRecvServerMsg)
+	this.RegForwardFromGate(this.HandlerServer.OnForwardFromGate)
+	this.RegForwardToServer(this.HandlerServer.OnForwardToServer)
 }

@@ -38,7 +38,7 @@ func (this *HandlerClient) Init(mod *LoginModule) {
 	}
 }
 
-func (this *HandlerClient) OnRecvClientMsg(smsg *servercomm.SForwardFromGate) {
+func (this *HandlerClient) OnForwardFromGate(smsg *servercomm.SForwardFromGate) {
 	top := &command.CS_TopLayer{}
 	json.Unmarshal(smsg.Data, top)
 

@@ -2,13 +2,20 @@ package command
 
 import (
 	"encoding/json"
-	"reflect"
 )
 
+type IMsg interface {
+	GetMsgName() string
+}
+
 func GetCSTopLayer(msg interface{}) []byte {
+	msgname := ""
+	if imsg, ok := msg.(IMsg); ok {
+		msgname = imsg.GetMsgName()
+	}
 	b, _ := json.Marshal(msg)
 	top := &CS_TopLayer{
-		MsgName: reflect.TypeOf(msg).String(),
+		MsgName: msgname,
 		Data:    b,
 	}
 	if top.MsgName[0] == '*' {
@@ -19,9 +26,13 @@ func GetCSTopLayer(msg interface{}) []byte {
 }
 
 func GetSCTopLayer(msg interface{}) []byte {
+	msgname := ""
+	if imsg, ok := msg.(IMsg); ok {
+		msgname = imsg.GetMsgName()
+	}
 	b, _ := json.Marshal(msg)
 	top := &SC_TopLayer{
-		MsgName: reflect.TypeOf(msg).String(),
+		MsgName: msgname,
 		Data:    b,
 	}
 	if top.MsgName[0] == '*' {

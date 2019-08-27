@@ -36,6 +36,7 @@ tags:
 
 msg:
 	@cd github.com/liasece/micserver/tools && ./makeservermsg.sh
+	@python3 github.com/liasece/micserver/tools/go2go.py -i ./command/command.go -o go --onlynames
 
 .PHONY: all debug clean wc image
 

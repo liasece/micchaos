@@ -37,7 +37,7 @@ func (this *HandlerClient) Init(mod *PlayerModule) {
 }
 
 //
-func (this *HandlerClient) OnRecvClientMsg(smsg *servercomm.SForwardFromGate) {
+func (this *HandlerClient) OnForwardFromGate(smsg *servercomm.SForwardFromGate) {
 	top := &command.CS_TopLayer{}
 	json.Unmarshal(smsg.Data, top)
 	this.Info("[HandlerClient.OnRecvClientMsg] 收到 Client 消息 %s",
@@ -51,6 +51,7 @@ func (this *HandlerClient) OnRecvClientMsg(smsg *servercomm.SForwardFromGate) {
 		}
 		this.msgCount = 0
 	}
+	// 根据消息名映射消息处理函数
 	if f, ok := this.mappingFunc[top.MsgName]; ok {
 		f(smsg.Session, top.Data)
 	} else {
