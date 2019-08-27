@@ -63,20 +63,21 @@ func (this *GatewayModule) HandleOnNewClient(conn *connect.ClientConn) {
 
 func (this *GatewayModule) HandleServerMsg(smsg *servercomm.SForwardToServer) {
 	switch smsg.MsgID {
-	// case command.SC_ResAccountLoginID:
-	// 	{
-	// 		msg := &command.SC_ResAccountLogin{}
-	// 		msg.ReadBinary(smsg.Data)
-	// 		if msg.Code == 0 {
-	// 			client := this.GetClientConn(msg.ConnectID)
-	// 			if client != nil {
-	// 				client.SetVertify(true)
-	// 				client.Session["UUID"] = msg.Account.UUID
-	// 				this.Info("[gate] 用户登陆成功 %s", msg.GetJson())
-	// 			}
-	// 		}
-	// 		this.SendMsgToClient(this.ModuleID, msg.ConnectID, msg)
-	// 	}
+	case servercomm.SUpdateSessionID:
+		{
+			msg := &servercomm.SUpdateSession{}
+			msg.ReadBinary(smsg.Data)
+			client := this.GetClientConn(msg.ClientConnID)
+			if client != nil {
+				for k, v := range msg.Session {
+					client.Session[k] = v
+				}
+				if client.Session["UUID"] != "" {
+					client.SetVertify(true)
+					this.Info("[gate] 用户登陆成功 %s", msg.GetJson())
+				}
+			}
+		}
 	default:
 		{
 			this.Error("未知消息 %d", smsg.MsgID)

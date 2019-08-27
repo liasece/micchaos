@@ -140,6 +140,11 @@ func (this *HandlerClient) OnCS_AccountLogin(
 				tmpplayer.Account.PhoneNumber,
 				tmpplayer.Account.PassWordMD5WS,
 				tmpplayer.Account.PassWordMD5WSSalt)
+			smsg := &servercomm.SUpdateSession{
+				Session:      map[string]string{"UUID": tmpplayer.Account.UUID},
+				ClientConnID: session.Get("connectid"),
+			}
+			this.SendServerCmdToServer(session.Get("gate"), smsg)
 			send := &command.SC_ResAccountLogin{
 				Code:      0,
 				Message:   "login secess",
