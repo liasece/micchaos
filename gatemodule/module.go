@@ -6,7 +6,6 @@ import (
 	"github.com/liasece/micserver/connect"
 	"github.com/liasece/micserver/module"
 	"github.com/liasece/micserver/msg"
-	"github.com/liasece/micserver/servercomm"
 	"github.com/liasece/micserver/util"
 )
 
@@ -25,26 +24,21 @@ func (this *GatewayModule) AfterInitModule() {
 		gate.RegHandleSocketPackage(this.HandleClientSocketMsg)
 		gate.RegOnNewConn(this.HandleOnNewClient)
 	}
-	// 当收到服务器间消息时
-	subnet := this.GetSubnetManager()
-	if subnet != nil {
-		subnet.RegHandleServerMsg(this.HandleServerMsg)
-	}
 }
 
 func (this *GatewayModule) HandleClientSocketMsg(
 	conn *connect.ClientConn, msgbin *msg.MessageBinary) {
-	this.Debug("收到TCP消息")
 	top := &command.CS_TopLayer{}
 	json.Unmarshal(msgbin.ProtoData, top)
+	this.Debug("收到TCP消息 MsgName[%s]", top.MsgName)
 	msgname := top.MsgName
 	servertype := command.GetServerTypeByMsgName(msgname)
-	serverid := conn.Session[servertype]
+	serverid := conn.Session.GetBindServer(servertype)
 	if serverid == "" {
 		// 获取一个负载均衡的服务器ID
 		serverid = this.GetBalanceServerID(servertype)
 		if serverid != "" {
-			conn.Session[servertype] = serverid
+			conn.Session.SetBindServer(servertype, serverid)
 		} else {
 			this.Error("找不到合适的目标服务器 MsgName[%s] ServerType[%s]",
 				msgname, servertype)
@@ -57,36 +51,6 @@ func (this *GatewayModule) HandleClientSocketMsg(
 
 func (this *GatewayModule) HandleOnNewClient(conn *connect.ClientConn) {
 	servertype := util.GetServerIDType(this.ModuleID)
-	conn.Session[servertype] = this.ModuleID
-	conn.Session["connectid"] = conn.Tempid
-}
-
-func (this *GatewayModule) HandleServerMsg(smsg *servercomm.SForwardToServer) {
-	switch smsg.MsgID {
-	case servercomm.SUpdateSessionID:
-		{
-			msg := &servercomm.SUpdateSession{}
-			msg.ReadBinary(smsg.Data)
-			client := this.GetClientConn(msg.ClientConnID)
-			if client != nil {
-				for k, v := range msg.Session {
-					client.Session[k] = v
-				}
-				if client.Session["UUID"] != "" {
-					client.SetVertify(true)
-					this.Info("[gate] 用户登陆成功 %s", msg.GetJson())
-				}
-			}
-		}
-	default:
-		{
-			this.Error("未知消息 %d", smsg.MsgID)
-		}
-	}
-}
-
-func (this *GatewayModule) SendMsgToClient(gateid string,
-	to string, msg interface{}) {
-	btop := command.GetSCTopLayer(msg)
-	this.BaseModule.SendBytesToClient(gateid, to, 0, btop)
+	conn.Session.SetBindServer(servertype, this.ModuleID)
+	conn.Session.SetConnectID(conn.Tempid)
 }

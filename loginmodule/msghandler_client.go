@@ -4,6 +4,7 @@ import (
 	"command"
 	"encoding/json"
 	"github.com/liasece/micserver/servercomm"
+	"github.com/liasece/micserver/session"
 	"github.com/liasece/micserver/util"
 	"playermodule/boxes"
 	"reflect"
@@ -15,12 +16,12 @@ type TmpPlayer struct {
 
 type HandlerClient struct {
 	*LoginModule
-	mappingFunc map[string]func(session boxes.Session, data []byte)
+	mappingFunc map[string]func(session session.Session, data []byte)
 }
 
 func (this *HandlerClient) Init(mod *LoginModule) {
 	this.LoginModule = mod
-	this.mappingFunc = make(map[string]func(session boxes.Session, data []byte))
+	this.mappingFunc = make(map[string]func(session session.Session, data []byte))
 	// 创建消息处理消息的映射
 	hf := reflect.ValueOf(this)
 	hft := hf.Type()
@@ -33,7 +34,7 @@ func (this *HandlerClient) Init(mod *LoginModule) {
 		// 计算方法名对应的消息名
 		msgName := "command." + funcName[2:]
 		this.mappingFunc[msgName] =
-			hf.Method(i).Interface().(func(session boxes.Session, data []byte))
+			hf.Method(i).Interface().(func(session session.Session, data []byte))
 	}
 }
 
@@ -53,7 +54,7 @@ func (this *HandlerClient) OnRecvClientMsg(smsg *servercomm.SForwardFromGate) {
 
 // 注册账号
 func (this *HandlerClient) OnCS_AccountRegister(
-	session boxes.Session, data []byte) {
+	session session.Session, data []byte) {
 	msg := &command.CS_AccountRegister{}
 	json.Unmarshal(data, msg)
 	this.Debug("玩家请求注册 %s", string(data))
@@ -94,17 +95,17 @@ func (this *HandlerClient) OnCS_AccountRegister(
 			send := &command.SC_ResAccountRigster{
 				Code:      1,
 				Message:   "目标用户名已存在",
-				ConnectID: session.Get("connectid"),
+				ConnectID: session.GetConnectID(),
 			}
-			this.SendMsgToClient(session.Get("gate"),
-				session.Get("connectid"), send)
+			this.SendMsgToClient(session.GetBindServer("gate"),
+				session.GetConnectID(), send)
 		}
 	}
 }
 
 // 玩家登陆
 func (this *HandlerClient) OnCS_AccountLogin(
-	session boxes.Session, data []byte) {
+	session session.Session, data []byte) {
 	msg := &command.CS_AccountLogin{}
 	json.Unmarshal(data, msg)
 	tmpplayer := &TmpPlayer{}
@@ -116,10 +117,10 @@ func (this *HandlerClient) OnCS_AccountLogin(
 		send := &command.SC_ResAccountLogin{
 			Code:      1,
 			Message:   "目标账号不存在",
-			ConnectID: session.Get("connectid"),
+			ConnectID: session.GetConnectID(),
 		}
-		this.SendMsgToClient(session.Get("gate"),
-			session.Get("connectid"), send)
+		this.SendMsgToClient(session.GetBindServer("gate"),
+			session.GetConnectID(), send)
 	} else {
 		pswmd5ws := util.HmacSha256ByString(msg.PassWordMD5,
 			tmpplayer.Account.PassWordMD5WSSalt)
@@ -129,10 +130,10 @@ func (this *HandlerClient) OnCS_AccountLogin(
 			send := &command.SC_ResAccountLogin{
 				Code:      1,
 				Message:   "密码错误",
-				ConnectID: session.Get("connectid"),
+				ConnectID: session.GetConnectID(),
 			}
-			this.SendMsgToClient(session.Get("gate"),
-				session.Get("connectid"), send)
+			this.SendMsgToClient(session.GetBindServer("gate"),
+				session.GetConnectID(), send)
 		} else {
 			// 登陆成功
 			this.Info("登陆成功 Msg[%s] %s:%s:%s:%s:%s", string(data),
@@ -140,19 +141,17 @@ func (this *HandlerClient) OnCS_AccountLogin(
 				tmpplayer.Account.PhoneNumber,
 				tmpplayer.Account.PassWordMD5WS,
 				tmpplayer.Account.PassWordMD5WSSalt)
-			smsg := &servercomm.SUpdateSession{
-				Session:      map[string]string{"UUID": tmpplayer.Account.UUID},
-				ClientConnID: session.Get("connectid"),
-			}
-			this.SendServerCmdToServer(session.Get("gate"), smsg)
+			session.SetUUID(tmpplayer.Account.UUID)
+			session.SyncToServer(&this.BaseModule, session.GetBindServer("gate"),
+				session.GetConnectID())
 			send := &command.SC_ResAccountLogin{
 				Code:      0,
 				Message:   "login secess",
-				ConnectID: session.Get("connectid"),
+				ConnectID: session.GetConnectID(),
 				Account:   tmpplayer.Account.GetMsg(),
 			}
-			this.SendMsgToClient(session.Get("gate"),
-				session.Get("connectid"), send)
+			this.SendMsgToClient(session.GetBindServer("gate"),
+				session.GetConnectID(), send)
 		}
 	}
 }

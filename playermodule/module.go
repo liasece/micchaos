@@ -53,10 +53,6 @@ func (this *PlayerModule) AfterInitModule() {
 	this.PlayerDocManager.Init(&this.BaseModule, this.mongo_userinfos)
 	this.PlayerDocManager.Logger = this.Logger
 
-	// 系统事件监听初始化
-	subnetManager := this.GetSubnetManager()
-	if subnetManager != nil {
-		subnetManager.RegHandleServerMsg(this.HandlerServer.OnRecvServerMsg)
-		subnetManager.RegHandleGateMsg(this.HandlerServer.OnRecvGateMsg)
-	}
+	this.RegForwardToServer(this.HandlerServer.OnRecvServerMsg)
+	this.RegForwardFromGate(this.HandlerServer.OnRecvGateMsg)
 }

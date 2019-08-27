@@ -4,6 +4,7 @@ import (
 	"command"
 	"github.com/liasece/micserver/log"
 	"github.com/liasece/micserver/module"
+	"github.com/liasece/micserver/session"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -12,8 +13,8 @@ type Player struct {
 	Account `json:"account"`
 	*log.Logger
 
-	Session Session `json:"-"`
-	Name    string  `json:"name"`
+	Session session.Session `json:"-"`
+	Name    string          `json:"name"`
 }
 
 func (this *Player) Init(mod *module.BaseModule) {
@@ -32,7 +33,7 @@ func (this *Player) AfterLoad() {
 	this.Info("从数据库加载成功 %s", this.UUID)
 }
 
-func (this *Player) AfterOnline(session Session) {
+func (this *Player) AfterOnline(session session.Session) {
 	this.Info("登陆成功 %s", this.UUID)
 	// Initial connect session
 	this.Session = session
@@ -43,6 +44,6 @@ func (this *Player) AfterOnline(session Session) {
 
 func (this *Player) SendMsg(msg interface{}) {
 	btop := command.GetSCTopLayer(msg)
-	this.mod.SendBytesToClient(this.Session.Get("gate"),
-		this.Session.Get("connectid"), 0, btop)
+	this.mod.SendBytesToClient(this.Session.GetBindServer("gate"),
+		this.Session.GetConnectID(), 0, btop)
 }

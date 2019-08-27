@@ -36,10 +36,6 @@ func (this *LoginModule) AfterInitModule() {
 		}
 	}
 
-	// 系统事件监听初始化
-	subnetManager := this.GetSubnetManager()
-	if subnetManager != nil {
-		subnetManager.RegHandleServerMsg(this.HandlerServer.OnRecvServerMsg)
-		subnetManager.RegHandleGateMsg(this.HandlerServer.OnRecvGateMsg)
-	}
+	this.RegForwardFromGate(this.HandlerServer.OnRecvGateMsg)
+	this.RegForwardToServer(this.HandlerServer.OnRecvServerMsg)
 }

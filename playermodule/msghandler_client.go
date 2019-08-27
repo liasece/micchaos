@@ -4,7 +4,7 @@ import (
 	"command"
 	"encoding/json"
 	"github.com/liasece/micserver/servercomm"
-	"playermodule/boxes"
+	"github.com/liasece/micserver/session"
 	"reflect"
 	"time"
 )
@@ -14,12 +14,12 @@ type HandlerClient struct {
 
 	lastCheckTime int64
 	msgCount      int64
-	mappingFunc   map[string]func(session boxes.Session, data []byte)
+	mappingFunc   map[string]func(session session.Session, data []byte)
 }
 
 func (this *HandlerClient) Init(mod *PlayerModule) {
 	this.PlayerModule = mod
-	this.mappingFunc = make(map[string]func(session boxes.Session, data []byte))
+	this.mappingFunc = make(map[string]func(session session.Session, data []byte))
 	// 创建消息处理消息的映射
 	hf := reflect.ValueOf(this)
 	hft := hf.Type()
@@ -32,7 +32,7 @@ func (this *HandlerClient) Init(mod *PlayerModule) {
 		// 计算方法名对应的消息名
 		msgName := "command." + funcName[2:]
 		this.mappingFunc[msgName] =
-			hf.Method(i).Interface().(func(session boxes.Session, data []byte))
+			hf.Method(i).Interface().(func(session session.Session, data []byte))
 	}
 }
 
@@ -59,11 +59,11 @@ func (this *HandlerClient) OnRecvClientMsg(smsg *servercomm.SForwardFromGate) {
 }
 
 // 客户端请求进入游戏
-func (this *HandlerClient) OnCS_EnterGame(session boxes.Session, data []byte) {
+func (this *HandlerClient) OnCS_EnterGame(session session.Session, data []byte) {
 	msg := &command.CS_EnterGame{}
 	json.Unmarshal(data, msg)
 	this.Info("收到 %s", string(data))
-	player := this.PlayerDocManager.GetPlayerDocMust(session["UUID"])
+	player := this.PlayerDocManager.GetPlayerDocMust(session.GetUUID())
 	if player != nil {
 		player.AfterOnline(session)
 	} else {
