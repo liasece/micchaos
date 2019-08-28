@@ -1,7 +1,7 @@
 package playermodule
 
 import (
-	"command"
+	"ccmd"
 	"encoding/json"
 	"github.com/liasece/micserver/servercomm"
 	"github.com/liasece/micserver/session"
@@ -30,7 +30,7 @@ func (this *HandlerClient) Init(mod *PlayerModule) {
 			continue
 		}
 		// 计算方法名对应的消息名
-		msgName := "command." + funcName[2:]
+		msgName := "ccmd." + funcName[2:]
 		this.mappingFunc[msgName] =
 			hf.Method(i).Interface().(func(session session.Session, data []byte))
 	}
@@ -38,7 +38,7 @@ func (this *HandlerClient) Init(mod *PlayerModule) {
 
 //
 func (this *HandlerClient) OnForwardFromGate(smsg *servercomm.SForwardFromGate) {
-	top := &command.CS_TopLayer{}
+	top := &ccmd.CS_TopLayer{}
 	json.Unmarshal(smsg.Data, top)
 	this.Info("[HandlerClient.OnRecvClientMsg] 收到 Client 消息 %s",
 		top.MsgName)
@@ -61,7 +61,7 @@ func (this *HandlerClient) OnForwardFromGate(smsg *servercomm.SForwardFromGate) 
 
 // 客户端请求进入游戏
 func (this *HandlerClient) OnCS_EnterGame(session session.Session, data []byte) {
-	msg := &command.CS_EnterGame{}
+	msg := &ccmd.CS_EnterGame{}
 	json.Unmarshal(data, msg)
 	this.Info("收到 %s", string(data))
 	player := this.PlayerDocManager.GetPlayerDocMust(session.GetUUID())

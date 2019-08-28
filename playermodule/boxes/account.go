@@ -1,7 +1,7 @@
 package boxes
 
 import (
-	"command"
+	"ccmd"
 )
 
 type Account struct {
@@ -12,8 +12,8 @@ type Account struct {
 	LoginName         string `json:"loginname"`
 }
 
-func (this *Account) GetMsg() *command.AccountInfo {
-	res := &command.AccountInfo{
+func (this *Account) GetMsg() *ccmd.AccountInfo {
+	res := &ccmd.AccountInfo{
 		LoginName: this.LoginName,
 		UUID:      this.UUID,
 	}

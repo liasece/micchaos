@@ -1,4 +1,4 @@
-package command
+package ccmd
 
 import (
 	"encoding/json"

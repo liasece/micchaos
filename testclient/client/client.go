@@ -1,7 +1,7 @@
 package client
 
 import (
-	"command"
+	"ccmd"
 	"encoding/json"
 	"github.com/liasece/micserver/connect"
 	"github.com/liasece/micserver/log"
@@ -27,7 +27,7 @@ func (this *Client) Init(name, passwd string) {
 
 func (this *Client) onConnectRecv(conn *connect.ClientConn,
 	msgbinary *msg.MessageBinary) {
-	topmsg := &command.SC_TopLayer{}
+	topmsg := &ccmd.SC_TopLayer{}
 	json.Unmarshal(msgbinary.ProtoData, topmsg)
 	this.Debug("收到消息 %s", topmsg.MsgName)
 	if f, ok := this.CmdHandler.mappingFunc[topmsg.MsgName]; ok {
@@ -37,15 +37,15 @@ func (this *Client) onConnectRecv(conn *connect.ClientConn,
 	}
 }
 
-func (this *Client) GetLoginMsg() *command.CS_AccountLogin {
-	res := &command.CS_AccountLogin{}
+func (this *Client) GetLoginMsg() *ccmd.CS_AccountLogin {
+	res := &ccmd.CS_AccountLogin{}
 	res.LoginName = this.LoginName
 	res.PassWordMD5 = util.HmacSha256ByString(this.Passwd, this.LoginName)
 	return res
 }
 
-func (this *Client) GetRegsiterMsg() *command.CS_AccountRegister {
-	res := &command.CS_AccountRegister{}
+func (this *Client) GetRegsiterMsg() *ccmd.CS_AccountRegister {
+	res := &ccmd.CS_AccountRegister{}
 	res.LoginName = this.LoginName
 	res.PassWordMD5 = util.HmacSha256ByString(this.Passwd, this.LoginName)
 	return res
@@ -65,6 +65,6 @@ func (this *Client) Dial(addr string) error {
 }
 
 func (this *Client) SendMsg(msg interface{}) {
-	btop := command.GetCSTopLayer(msg)
+	btop := ccmd.GetCSTopLayer(msg)
 	this.Conn.SendBytes(0, btop)
 }

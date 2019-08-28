@@ -1,7 +1,7 @@
 package gatemodule
 
 import (
-	"command"
+	"ccmd"
 	"encoding/json"
 	"github.com/liasece/micserver/connect"
 	"github.com/liasece/micserver/module"
@@ -28,11 +28,11 @@ func (this *GatewayModule) AfterInitModule() {
 
 func (this *GatewayModule) HandleClientSocketMsg(
 	conn *connect.ClientConn, msgbin *msg.MessageBinary) {
-	top := &command.CS_TopLayer{}
+	top := &ccmd.CS_TopLayer{}
 	json.Unmarshal(msgbin.ProtoData, top)
 	this.Debug("收到TCP消息 MsgName[%s]", top.MsgName)
 	msgname := top.MsgName
-	servertype := command.GetServerTypeByMsgName(msgname)
+	servertype := ccmd.GetServerTypeByMsgName(msgname)
 	serverid := conn.Session.GetBindServer(servertype)
 	if serverid == "" {
 		// 获取一个负载均衡的服务器ID

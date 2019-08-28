@@ -1,7 +1,7 @@
 package boxes
 
 import (
-	"command"
+	"ccmd"
 	"github.com/liasece/micserver/log"
 	"github.com/liasece/micserver/module"
 	"github.com/liasece/micserver/session"
@@ -38,12 +38,12 @@ func (this *Player) AfterOnline(session session.Session) {
 	// Initial connect session
 	this.Session = session
 
-	send := &command.SC_ResEnterGame{}
+	send := &ccmd.SC_ResEnterGame{}
 	this.SendMsg(send)
 }
 
 func (this *Player) SendMsg(msg interface{}) {
-	btop := command.GetSCTopLayer(msg)
+	btop := ccmd.GetSCTopLayer(msg)
 	this.mod.SendBytesToClient(this.Session.GetBindServer("gate"),
 		this.Session.GetConnectID(), 0, btop)
 }

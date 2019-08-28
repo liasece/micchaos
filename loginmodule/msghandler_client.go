@@ -1,7 +1,7 @@
 package loginmodule
 
 import (
-	"command"
+	"ccmd"
 	"encoding/json"
 	"github.com/liasece/micserver/servercomm"
 	"github.com/liasece/micserver/session"
@@ -32,14 +32,14 @@ func (this *HandlerClient) Init(mod *LoginModule) {
 			continue
 		}
 		// 计算方法名对应的消息名
-		msgName := "command." + funcName[2:]
+		msgName := "ccmd." + funcName[2:]
 		this.mappingFunc[msgName] =
 			hf.Method(i).Interface().(func(session session.Session, data []byte))
 	}
 }
 
 func (this *HandlerClient) OnForwardFromGate(smsg *servercomm.SForwardFromGate) {
-	top := &command.CS_TopLayer{}
+	top := &ccmd.CS_TopLayer{}
 	json.Unmarshal(smsg.Data, top)
 
 	this.Info("[Login.HandlerClient.OnRecvClientMsg] 收到 Client 消息 "+
@@ -55,7 +55,7 @@ func (this *HandlerClient) OnForwardFromGate(smsg *servercomm.SForwardFromGate) 
 // 注册账号
 func (this *HandlerClient) OnCS_AccountRegister(
 	session session.Session, data []byte) {
-	msg := &command.CS_AccountRegister{}
+	msg := &ccmd.CS_AccountRegister{}
 	json.Unmarshal(data, msg)
 	this.Debug("玩家请求注册 %s", string(data))
 	tmpuuid, err := util.NewUniqueID(101)
@@ -92,7 +92,7 @@ func (this *HandlerClient) OnCS_AccountRegister(
 		} else {
 			this.Info("目标玩家已经存在了，创建账号失败，已存在玩家的UUID[%s]",
 				confirm.Account.UUID)
-			send := &command.SC_ResAccountRigster{
+			send := &ccmd.SC_ResAccountRigster{
 				Code:      1,
 				Message:   "目标用户名已存在",
 				ConnectID: session.GetConnectID(),
@@ -106,7 +106,7 @@ func (this *HandlerClient) OnCS_AccountRegister(
 // 玩家登陆
 func (this *HandlerClient) OnCS_AccountLogin(
 	session session.Session, data []byte) {
-	msg := &command.CS_AccountLogin{}
+	msg := &ccmd.CS_AccountLogin{}
 	json.Unmarshal(data, msg)
 	tmpplayer := &TmpPlayer{}
 	err := this.mongo_userinfos.SelectOneByAccount(
@@ -114,7 +114,7 @@ func (this *HandlerClient) OnCS_AccountLogin(
 	if err != nil {
 		// 登陆失败
 		this.Error("登陆失败 Err[%s] ReqJson[%s]", err.Error(), string(data))
-		send := &command.SC_ResAccountLogin{
+		send := &ccmd.SC_ResAccountLogin{
 			Code:      1,
 			Message:   "目标账号不存在",
 			ConnectID: session.GetConnectID(),
@@ -127,7 +127,7 @@ func (this *HandlerClient) OnCS_AccountLogin(
 		if tmpplayer.Account.PassWordMD5WS != pswmd5ws {
 			// 密码错误
 			this.Info("登陆失败 密码错误 ReqJson[%s]", string(data))
-			send := &command.SC_ResAccountLogin{
+			send := &ccmd.SC_ResAccountLogin{
 				Code:      1,
 				Message:   "密码错误",
 				ConnectID: session.GetConnectID(),
@@ -143,7 +143,7 @@ func (this *HandlerClient) OnCS_AccountLogin(
 				tmpplayer.Account.PassWordMD5WSSalt)
 			session.SetUUID(tmpplayer.Account.UUID)
 			session.SyncToServer(&this.BaseModule, session.GetBindServer("gate"))
-			send := &command.SC_ResAccountLogin{
+			send := &ccmd.SC_ResAccountLogin{
 				Code:      0,
 				Message:   "login secess",
 				ConnectID: session.GetConnectID(),
@@ -157,6 +157,6 @@ func (this *HandlerClient) OnCS_AccountLogin(
 
 func (this *HandlerClient) SendMsgToClient(gateid string,
 	to string, msg interface{}) {
-	btop := command.GetSCTopLayer(msg)
+	btop := ccmd.GetSCTopLayer(msg)
 	this.LoginModule.SendBytesToClient(gateid, to, 0, btop)
 }

@@ -1,14 +1,14 @@
-package command
+package ccmd
 const (
-	SC_TopLayerName = "command.SC_TopLayer"
-	CS_TopLayerName = "command.CS_TopLayer"
-	AccountInfoName = "command.AccountInfo"
-	CS_AccountLoginName = "command.CS_AccountLogin"
-	SC_ResAccountLoginName = "command.SC_ResAccountLogin"
-	CS_AccountRegisterName = "command.CS_AccountRegister"
-	SC_ResAccountRigsterName = "command.SC_ResAccountRigster"
-	CS_EnterGameName = "command.CS_EnterGame"
-	SC_ResEnterGameName = "command.SC_ResEnterGame"
+	SC_TopLayerName = "ccmd.SC_TopLayer"
+	CS_TopLayerName = "ccmd.CS_TopLayer"
+	AccountInfoName = "ccmd.AccountInfo"
+	CS_AccountLoginName = "ccmd.CS_AccountLogin"
+	SC_ResAccountLoginName = "ccmd.SC_ResAccountLogin"
+	CS_AccountRegisterName = "ccmd.CS_AccountRegister"
+	SC_ResAccountRigsterName = "ccmd.SC_ResAccountRigster"
+	CS_EnterGameName = "ccmd.CS_EnterGame"
+	SC_ResEnterGameName = "ccmd.SC_ResEnterGame"
 )
 func (this *SC_TopLayer) GetMsgName() string {
 	return SC_TopLayerName
