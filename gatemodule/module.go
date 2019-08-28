@@ -3,9 +3,11 @@ package gatemodule
 import (
 	"ccmd"
 	"encoding/json"
+	"github.com/gobwas/ws"
 	"github.com/liasece/micserver/connect"
 	"github.com/liasece/micserver/module"
 	"github.com/liasece/micserver/msg"
+	"net"
 )
 
 type GatewayModule struct {
@@ -18,7 +20,17 @@ type GatewayModule struct {
 func (this *GatewayModule) AfterInitModule() {
 	this.BaseModule.AfterInitModule()
 	// 当收到客户端发过来的消息时
+	this.RegAcceptConnect(this.onAcceptConnect)
 	this.RegRecvMsg(this.onRecvMsg)
+}
+
+func (this *GatewayModule) onAcceptConnect(conn net.Conn) {
+	_, err := ws.Upgrade(conn)
+	if err != nil {
+		this.Error("ws.Upgrade Err[%s]", err.Error())
+	} else {
+		this.Info("ws.Upgrade")
+	}
 }
 
 func (this *GatewayModule) onRecvMsg(
