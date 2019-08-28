@@ -6,7 +6,6 @@ import (
 	"github.com/liasece/micserver/connect"
 	"github.com/liasece/micserver/module"
 	"github.com/liasece/micserver/msg"
-	"github.com/liasece/micserver/util"
 )
 
 type GatewayModule struct {
@@ -19,11 +18,7 @@ type GatewayModule struct {
 func (this *GatewayModule) AfterInitModule() {
 	this.BaseModule.AfterInitModule()
 	// 当收到客户端发过来的消息时
-	gate := this.GetGate()
-	if gate != nil {
-		gate.RegHandleSocketPackage(this.HandleClientSocketMsg)
-		gate.RegOnNewConn(this.HandleOnNewClient)
-	}
+	this.RegRecvMsg(this.HandleClientSocketMsg)
 }
 
 func (this *GatewayModule) HandleClientSocketMsg(
@@ -47,9 +42,4 @@ func (this *GatewayModule) HandleClientSocketMsg(
 		this.Error("找不到合适的目标服务器 MsgName[%s] ServerType[%s]",
 			msgname, servertype)
 	}
-}
-
-func (this *GatewayModule) HandleOnNewClient(conn *connect.ClientConn) {
-	servertype := util.GetServerIDType(this.ModuleID)
-	conn.Session.SetBindServer(servertype, this.ModuleID)
 }
