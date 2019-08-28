@@ -22,7 +22,7 @@ func (this *GatewayModule) AfterInitModule() {
 }
 
 func (this *GatewayModule) onRecvMsg(
-	conn *connect.ClientConn, msgbin *msg.MessageBinary) {
+	conn *connect.Client, msgbin *msg.MessageBinary) {
 	top := &ccmd.CS_TopLayer{}
 	json.Unmarshal(msgbin.ProtoData, top)
 	this.Debug("收到TCP消息 MsgName[%s]", top.MsgName)

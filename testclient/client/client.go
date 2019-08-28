@@ -11,7 +11,7 @@ import (
 
 type Client struct {
 	*log.Logger
-	Conn       *connect.ClientConn
+	Conn       *connect.Client
 	LoginName  string
 	Passwd     string
 	CmdHandler CmdHandler
@@ -25,7 +25,7 @@ func (this *Client) Init(name, passwd string) {
 	this.CmdHandler.Init(this)
 }
 
-func (this *Client) onConnectRecv(conn *connect.ClientConn,
+func (this *Client) onConnectRecv(conn *connect.Client,
 	msgbinary *msg.MessageBinary) {
 	topmsg := &ccmd.SC_TopLayer{}
 	json.Unmarshal(msgbinary.ProtoData, topmsg)
