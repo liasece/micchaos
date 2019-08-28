@@ -39,18 +39,17 @@ func (this *GatewayModule) HandleClientSocketMsg(
 		serverid = this.GetBalanceServerID(servertype)
 		if serverid != "" {
 			conn.Session.SetBindServer(servertype, serverid)
-		} else {
-			this.Error("找不到合适的目标服务器 MsgName[%s] ServerType[%s]",
-				msgname, servertype)
 		}
 	}
 	if serverid != "" {
 		this.ForwardClientMsgToServer(conn, serverid, 0, msgbin.ProtoData)
+	} else {
+		this.Error("找不到合适的目标服务器 MsgName[%s] ServerType[%s]",
+			msgname, servertype)
 	}
 }
 
 func (this *GatewayModule) HandleOnNewClient(conn *connect.ClientConn) {
 	servertype := util.GetServerIDType(this.ModuleID)
 	conn.Session.SetBindServer(servertype, this.ModuleID)
-	conn.Session.SetConnectID(conn.Tempid)
 }
