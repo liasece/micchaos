@@ -94,11 +94,29 @@ func (this *UserInfos) SelectOneByKey(primarykey bson.M, obj interface{}) error 
 
 func (this *UserInfos) SelectOneByAccount(account string,
 	obj interface{}) error {
+	if account == "" {
+		return fmt.Errorf("nil account")
+	}
 	primarykey := bson.M{
 		"$or": bson.A{
-			bson.M{"account.phonenumber": account},
-			bson.M{"account.uuid": account},
-			bson.M{"account.loginname": account},
+			bson.M{
+				"$and": bson.A{
+					bson.M{"account.phonenumber": account},
+					bson.M{"account.phonenumber": bson.M{"$ne": ""}},
+				},
+			},
+			bson.M{
+				"$and": bson.A{
+					bson.M{"account.uuid": account},
+					bson.M{"account.uuid": bson.M{"$ne": ""}},
+				},
+			},
+			bson.M{
+				"$and": bson.A{
+					bson.M{"account.loginname": account},
+					bson.M{"account.loginname": bson.M{"$ne": ""}},
+				},
+			},
 		},
 	}
 	res := this.Collection.SelectOne(primarykey)
@@ -112,11 +130,29 @@ func (this *UserInfos) SelectOneByAccount(account string,
 
 func (this *UserInfos) FindOneOrCreate(account string, newobj interface{},
 	result interface{}) error {
+	if account == "" {
+		return fmt.Errorf("nil account")
+	}
 	primarykey := bson.M{
 		"$or": bson.A{
-			bson.M{"account.phonenumber": account},
-			bson.M{"account.uuid": account},
-			bson.M{"account.loginname": account},
+			bson.M{
+				"$and": bson.A{
+					bson.M{"account.phonenumber": account},
+					bson.M{"account.phonenumber": bson.M{"$ne": ""}},
+				},
+			},
+			bson.M{
+				"$and": bson.A{
+					bson.M{"account.uuid": account},
+					bson.M{"account.uuid": bson.M{"$ne": ""}},
+				},
+			},
+			bson.M{
+				"$and": bson.A{
+					bson.M{"account.loginname": account},
+					bson.M{"account.loginname": bson.M{"$ne": ""}},
+				},
+			},
 		},
 	}
 	bsonm, err := GetBsonProxyJsonByObj(newobj)

@@ -43,8 +43,8 @@ func (this *HandlerClient) OnForwardFromGate(smsg *servercomm.SForwardFromGate) 
 	json.Unmarshal(smsg.Data, top)
 
 	this.Info("[Login.HandlerClient.OnRecvClientMsg] 收到 Client 消息 "+
-		"MsgName[%s]",
-		top.MsgName)
+		"MsgName[%s] Data[%s]",
+		top.MsgName, string(smsg.Data))
 
 	// 从消息处理映射集合找到对应的处理函数并且执行
 	if f, ok := this.mappingFunc[top.MsgName]; ok {
@@ -89,6 +89,13 @@ func (this *HandlerClient) OnCS_AccountRegister(
 				newaccount.Account.UUID, newaccount.Account.PhoneNumber,
 				newaccount.Account.PassWordMD5WS,
 				newaccount.Account.PassWordMD5WSSalt)
+			send := &ccmd.SC_ResAccountRigster{
+				Code:      0,
+				Message:   "注册成功",
+				ConnectID: session.GetConnectID(),
+			}
+			this.SendMsgToClient(session.GetBindServer("gate"),
+				session.GetConnectID(), send)
 		} else {
 			this.Info("目标玩家已经存在了，创建账号失败，已存在玩家的UUID[%s]",
 				confirm.Account.UUID)
