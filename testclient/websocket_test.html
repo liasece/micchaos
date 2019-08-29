@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Chat Example</title>
+<script type="text/javascript">
+function writeBinaryString(data,obj) {
+    if(!obj ) {
+        data.writeUnsignedShort(0);
+        return 2;
+    }
+    let strleng = stringToBytes(obj).length
+    data.writeUnsignedShort(strleng);
+    let strarr = new ByteArray();
+    strarr.position = 0;
+    strarr.endian = "bigEndian";
+    strarr.writeUTFBytes(obj);
+    data.writeBytes(strarr,0,strleng);
+    return 2+strleng;
+}
+function stringToBytes(str) {
+    var bytes = new Array();
+    var len, c;
+    len = str.length;
+    for(var i = 0;
+    i < len;
+    i++ ) {
+        c = str.charCodeAt(i);
+        if(c >= 0x010000 && c <= 0x10FFFF ) {
+            bytes.push(((c >> 18) & 0x07) | 0xF0);
+            bytes.push(((c >> 12) & 0x3F) | 0x80);
+            bytes.push(((c >> 6) & 0x3F) | 0x80);
+            bytes.push((c & 0x3F) | 0x80);
+        } else if(c >= 0x000800 && c <= 0x00FFFF ) {
+            bytes.push(((c >> 12) & 0x0F) | 0xE0);
+            bytes.push(((c >> 6) & 0x3F) | 0x80);
+            bytes.push((c & 0x3F) | 0x80);
+        } else if(c >= 0x000080 && c <= 0x0007FF ) {
+            bytes.push(((c >> 6) & 0x1F) | 0xC0);
+            bytes.push((c & 0x3F) | 0x80);
+        } else {
+            bytes.push(c & 0xFF);
+        }
+    }
+    return bytes;
+}
+function GetSizestring(str){
+    return stringToBytes(str).length + 2;
+}
+
+function sendToServer(conn,topic,data) {
+    var toplayer = {
+        "MsgName":topic,
+        "Data":stringToBytes(JSON.stringify(data)),
+    }
+    var byteArray = new Uint8Array(stringToBytes(JSON.stringify(toplayer)));
+    var buffer = new ArrayBuffer(4+2+byteArray.byteLength)
+    var dataview = new DataView(buffer);
+    dataview.setUint32(0,4+2+byteArray.byteLength)
+    dataview.setUint16(4,0)
+    var head2Array = new Uint8Array(buffer,4+2);
+    head2Array.set(byteArray)
+
+    conn.send(buffer);
+}
+
+window.onload = function () {
+    var conn;
+    var msg = document.getElementById("msg");
+    var log = document.getElementById("log");
+    function appendLog(item) {
+        var doScroll = log.scrollTop > log.scrollHeight - log.clientHeight - 1;
+        log.appendChild(item);
+        if (doScroll) {
+            log.scrollTop = log.scrollHeight - log.clientHeight;
+        }
+    }
+    document.getElementById("form").onsubmit = function () {
+        if (!conn) {
+            return false;
+        }
+        if (!msg.value) {
+            return false;
+        }
+
+        sendToServer(conn,"ccmd.CS_AccountLogin",
+            {
+                "LoginName":"js001",
+                "PassWordMD5":"testmd5",
+            })
+
+        var item = document.createElement("div");
+        item.innerHTML = "<b>Send:["+msg.value+"]</b>";
+        appendLog(item);
+
+        msg.value = "";
+        return false;
+    };
+    if (window["WebSocket"]) {
+        conn = new WebSocket("ws://localhost:11002");
+        conn.binaryType = "arraybuffer";
+        conn.onopen = function (evt) {
+            var item = document.createElement("div");
+            item.innerHTML = "<b>Connected</b>";
+            appendLog(item);
+        };
+        conn.onclose = function (evt) {
+            var item = document.createElement("div");
+            item.innerHTML = "<b>Connection closed.</b>";
+            appendLog(item);
+        };
+        conn.onmessage = function (evt) {
+            var messages = evt.data.split('\n');
+            for (var i = 0; i < messages.length; i++) {
+                var item = document.createElement("div");
+                item.innerText = messages[i];
+                appendLog(item);
+            }
+        };
+        conn.onerror = function (evt) {
+            var item = document.createElement("div");
+            item.innerHTML = "<b>Connection Err:"+evt+"</b>";
+            appendLog(item);
+        };
+    } else {
+        var item = document.createElement("div");
+        item.innerHTML = "<b>Your browser does not support WebSockets.</b>";
+        appendLog(item);
+    }
+};
+</script>
+<style type="text/css">
+html {
+    overflow: hidden;
+}
+body {
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    background: gray;
+}
+#log {
+    background: white;
+    margin: 0;
+    padding: 0.5em 0.5em 0.5em 0.5em;
+    position: absolute;
+    top: 0.5em;
+    left: 0.5em;
+    right: 0.5em;
+    bottom: 3em;
+    overflow: auto;
+}
+#form {
+    padding: 0 0.5em 0 0.5em;
+    margin: 0;
+    position: absolute;
+    bottom: 1em;
+    left: 0px;
+    width: 100%;
+    overflow: hidden;
+}
+</style>
+</head>
+<body>
+<div id="log"></div>
+<form id="form">
+    <input type="submit" value="Send" />
+    <input type="text" id="msg" size="64"/>
+</form>
+</body>
+</html>

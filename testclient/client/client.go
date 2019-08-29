@@ -52,14 +52,14 @@ func (this *Client) GetRegsiterMsg() *ccmd.CS_AccountRegister {
 }
 
 func (this *Client) Dial(addr string) error {
-	conn, err := connect.ClientDial(addr, this.onConnectRecv, nil)
+	client, err := connect.ClientDial(addr, this.onConnectRecv, nil)
 	if err != nil {
 		this.Error("connect.ClientDial(%s) err:%s", addr, err.Error())
 		return err
 	} else {
 		this.Debug("链接成功")
 	}
-	this.Conn = conn
+	this.Conn = client
 
 	return nil
 }
