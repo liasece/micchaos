@@ -25,15 +25,19 @@ func NewGatewayModule(moduleid string) *GatewayModule {
 	return res
 }
 
+// 在 Module 初始化完成之后，注意，此时不一定会连上子网中的其他服务器
 func (this *GatewayModule) AfterInitModule() {
+	// 调用父类方法
 	this.BaseModule.AfterInitModule()
 	// 当收到客户端发过来的消息时
 	this.RegOnNewClient(this.onNewClient)
-	this.RegOnRecvMsg(this.onRecvMsg)
+	this.RegOnRecvClientMsg(this.onRecvClientMsg)
 }
 
-func (this *GatewayModule) onRecvMsg(
+// 当收到消息时调用
+func (this *GatewayModule) onRecvClientMsg(
 	conn *connect.Client, msgbin *msg.MessageBinary) {
+	// 所有客户端的消息都由 CS_TopLayer 包裹
 	top := &ccmd.CS_TopLayer{}
 	json.Unmarshal(msgbin.ProtoData, top)
 	this.Debug("收到TCP消息 MsgName[%s]", top.MsgName)
