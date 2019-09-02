@@ -1,118 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Chat Example</title>
-<meta http-equiv="Content-Type" content="text/html; charset=unicode" />
-<script src="./js/util/base64.js" type="text/javascript" charset="utf-8" async></script>
-<script src="./js/util/string_convert.js" type="text/javascript" charset="utf-8" async></script>
-<script src="./js/network/client.js" type="text/javascript" charset="utf-8" async></script>
-<script type="text/javascript" defer>
-window.onload = function () {
-    var client;
-    var msg = document.getElementById("msg");
-    var log = document.getElementById("log");
-    function appendLog(item) {
-        var doScroll = log.scrollTop > log.scrollHeight - log.clientHeight - 1;
-        log.appendChild(item);
-        if (doScroll) {
-            log.scrollTop = log.scrollHeight - log.clientHeight;
-        }
-    }
-    document.getElementById("form").onsubmit = function () {
-        if (!client) {
-            return false;
-        }
-        if (!msg.value) {
-            return false;
-        }
+	<title>Chat Example</title>
+	<meta http-equiv="Content-Type" content="text/html" charset="utf-8" />
+	<script src="./js/util/base64.js" type="text/javascript" charset="utf-8" async></script>
+	<script src="./js/util/string_convert.js" type="text/javascript" charset="utf-8" async></script>
+	<script src="./js/network/client.js" type="text/javascript" charset="utf-8" async></script>
+	<script type="text/javascript" defer>
+		window.onload = function () {
+			var client;
+			var msg = document.getElementById("msg");
+			var log = document.getElementById("log");
+			function appendLog(item) {
+				var doScroll = log.scrollTop > log.scrollHeight - log.clientHeight - 1;
+				log.appendChild(item);
+				if (doScroll) {
+					log.scrollTop = log.scrollHeight - log.clientHeight;
+				}
+			}
+			document.getElementById("form").onsubmit = function () {
+				if (!client) {
+					return false;
+				}
+				if (!msg.value) {
+					return false;
+				}
 
-        client.send("ccmd.CS_AccountRegister",
-            {
-                "LoginName":"ws001",
-                "PassWordMD5":msg.value,
-            })
+				client.send("ccmd.CS_AccountRegister",
+					{
+						"LoginName":"ws001",
+						"PassWordMD5":msg.value
+					});
 
-        var item = document.createElement("div");
-        item.innerHTML = "<b>Send:["+msg.value+"]</b>";
-        appendLog(item);
+				var item = document.createElement("div");
+				item.innerHTML = "<b>Send:["+msg.value+"]</b>";
+				appendLog(item);
 
-        msg.value = "";
-        return false;
-    };
-    if (window["WebSocket"]) {
-        hendler = {
-            onopen : function (evt) {
-                var item = document.createElement("div");
-                item.innerHTML = "<b>Connected</b>";
-                appendLog(item);
-            },
-            onclose : function (evt) {
-                var item = document.createElement("div");
-                item.innerHTML = "<b>Connection closed.</b>";
-                appendLog(item);
-            },
-            onmessage : function (topic,obj) {
-                var item = document.createElement("div");
-                item.innerHTML = "<b>Topic["+topic+"];Obj["+JSON.stringify(obj)+"]"+"</b>";
-                appendLog(item);
+				msg.value = "";
+				return false;
+			};
+			if (window["WebSocket"]) {
+				var hendler = {
+					onopen: function (evt) {
+						var item = document.createElement("div");
+						item.innerHTML = "<b>Connected</b>";
+						appendLog(item);
+					},
+					onclose: function (evt) {
+						var item = document.createElement("div");
+						item.innerHTML = "<b>Connection closed.</b>";
+						appendLog(item);
+					},
+					onmessage: function (topic, obj) {
+						var item = document.createElement("div");
+						item.innerHTML = "<b>Topic[" + topic + "];Obj[" + JSON.stringify(obj) + "]" + "</b>";
+						appendLog(item);
 
-                console.log("topic:"+topic+";obj:"+JSON.stringify(obj))
-                console.log(obj)
-            },
-            onerror : function (evt) {
-                var item = document.createElement("div");
-                item.innerHTML = "<b>Connection Err:"+evt+"</b>";
-                appendLog(item);
-            },
-        }
-        client = Client.createNew(hendler)
-        client.dial("ws://ssh.liasece.com:21023")
-    } else {
-        var item = document.createElement("div");
-        item.innerHTML = "<b>Your browser does not support WebSockets.</b>";
-        appendLog(item);
-    }
-};
-</script>
-<style type="text/css">
-html {
-    overflow: hidden;
-}
-body {
-    overflow: hidden;
-    padding: 0;
-    margin: 0;
-    width: 100%;
-    height: 100%;
-    background: gray;
-}
-#log {
-    background: white;
-    margin: 0;
-    padding: 0.5em 0.5em 0.5em 0.5em;
-    position: absolute;
-    top: 0.5em;
-    left: 0.5em;
-    right: 0.5em;
-    bottom: 3em;
-    overflow: auto;
-}
-#form {
-    padding: 0 0.5em 0 0.5em;
-    margin: 0;
-    position: absolute;
-    bottom: 1em;
-    left: 0px;
-    width: 100%;
-    overflow: hidden;
-}
-</style>
+						console.log("topic:" + topic + ";obj:" + JSON.stringify(obj));
+						console.log(obj);
+					},
+					onerror: function (evt) {
+						var item = document.createElement("div");
+						item.innerHTML = "<b>Connection Err:" + evt + "</b>";
+						appendLog(item);
+					}
+				};
+				client = Client.createNew(hendler);
+				client.dial("ws://ssh.liasece.com:21023")
+			} else {
+				var item = document.createElement("div");
+				item.innerHTML = "<b>Your browser does not support WebSockets.</b>";
+				appendLog(item);
+			}
+		};
+	</script>
+	<style type="text/css">
+		html {
+			overflow: hidden;
+		}
+		body {
+			overflow: hidden;
+			padding: 0;
+			margin: 0;
+			width: 100%;
+			height: 100%;
+			background: gray;
+		}
+		#log {
+			background: white;
+			margin: 0;
+			padding: 0.5em 0.5em 0.5em 0.5em;
+			position: absolute;
+			top: 0.5em;
+			left: 0.5em;
+			right: 0.5em;
+			bottom: 3em;
+			overflow: auto;
+		}
+		#form {
+			padding: 0 0.5em 0 0.5em;
+			margin: 0;
+			position: absolute;
+			bottom: 1em;
+			left: 0;
+			width: 100%;
+			overflow: hidden;
+		}
+	</style>
 </head>
 <body>
 <div id="log"></div>
 <form id="form">
-    <input type="submit" value="Send" />
-    <input type="text" id="msg" size="64"/>
+	<input type="submit" value="Send" />
+	<label for="msg"><input type="text" id="msg" size="64"/></label>
 </form>
 </body>
 </html>
