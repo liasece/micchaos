@@ -19,22 +19,17 @@ type GatewayModule struct {
 	testSwitch      bool
 }
 
+func NewGatewayModule(moduleid string) *GatewayModule {
+	res := &GatewayModule{}
+	res.BaseModule.SetModuleID(moduleid)
+	return res
+}
+
 func (this *GatewayModule) AfterInitModule() {
 	this.BaseModule.AfterInitModule()
 	// 当收到客户端发过来的消息时
-	this.RegNewClient(this.onNewClient)
-	this.RegRecvMsg(this.onRecvMsg)
-}
-
-func (this *GatewayModule) onNewClient(client *connect.Client) {
-	_, err := ws.Upgrade(client.Conn)
-	if err != nil {
-		this.Error("ws.Upgrade Err[%s]", err.Error())
-	} else {
-		this.Info("ws.Upgrade")
-	}
-	client.RegReadTCPBytes(this.doReadWSBytes)
-	client.RegSendTCPBytes(this.doSendWSBytes)
+	this.RegOnNewClient(this.onNewClient)
+	this.RegOnRecvMsg(this.onRecvMsg)
 }
 
 func (this *GatewayModule) onRecvMsg(
@@ -63,6 +58,19 @@ func (this *GatewayModule) onRecvMsg(
 		this.Error("找不到合适的目标服务器 MsgName[%s] ServerType[%s]",
 			msgname, servertype)
 	}
+}
+
+// 在创建新的连接时，将目标连接提升为 websocket 连接
+func (this *GatewayModule) onNewClient(client *connect.Client) {
+	_, err := ws.Upgrade(client.Conn)
+	if err != nil {
+		this.Error("ws.Upgrade Err[%s]", err.Error())
+	} else {
+		this.Info("ws.Upgrade")
+	}
+	// websocket 需要劫持底层的发送及接收流程
+	client.RegDoReadTCPBytes(this.doReadWSBytes)
+	client.RegDoSendTCPBytes(this.doSendWSBytes)
 }
 
 type wsState struct {

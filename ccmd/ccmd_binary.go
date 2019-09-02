@@ -9,6 +9,7 @@ const (
 	SC_ResAccountRigsterName = "ccmd.SC_ResAccountRigster"
 	CS_EnterGameName = "ccmd.CS_EnterGame"
 	SC_ResEnterGameName = "ccmd.SC_ResEnterGame"
+	SC_TipsName = "ccmd.SC_Tips"
 )
 func (this *SC_TopLayer) GetMsgName() string {
 	return SC_TopLayerName
@@ -36,4 +37,7 @@ func (this *CS_EnterGame) GetMsgName() string {
 }
 func (this *SC_ResEnterGame) GetMsgName() string {
 	return SC_ResEnterGameName
+}
+func (this *SC_Tips) GetMsgName() string {
+	return SC_TipsName
 }

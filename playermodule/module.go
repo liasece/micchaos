@@ -17,6 +17,12 @@ type PlayerModule struct {
 	HandlerServer    HandlerServer
 }
 
+func NewPlayerModule(moduleid string) *PlayerModule {
+	res := &PlayerModule{}
+	res.BaseModule.SetModuleID(moduleid)
+	return res
+}
+
 func (this *PlayerModule) AfterInitModule() {
 	this.BaseModule.AfterInitModule()
 

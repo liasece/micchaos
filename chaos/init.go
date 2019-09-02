@@ -56,23 +56,11 @@ func (this *InitManager) GetProgramModuleList() []module.IModule {
 			log.Debug("App 初始化 ServerType[%s] ServerID[%s]", stype, pid)
 			switch stype {
 			case "gate":
-				this.addModule(&gatemodule.GatewayModule{
-					BaseModule: module.BaseModule{
-						ModuleID: pid,
-					},
-				})
+				this.addModule(gatemodule.NewGatewayModule(pid))
 			case "player":
-				this.addModule(&playermodule.PlayerModule{
-					BaseModule: module.BaseModule{
-						ModuleID: pid,
-					},
-				})
+				this.addModule(playermodule.NewPlayerModule(pid))
 			case "login":
-				this.addModule(&loginmodule.LoginModule{
-					BaseModule: module.BaseModule{
-						ModuleID: pid,
-					},
-				})
+				this.addModule(loginmodule.NewLoginModule(pid))
 			default:
 				panic(fmt.Sprintf("无法解析的模块 %s:%s", stype, pid))
 			}
@@ -80,16 +68,8 @@ func (this *InitManager) GetProgramModuleList() []module.IModule {
 
 		// 如果当前是开发模式，添加如下的列表
 		if isDevelopment {
-			this.addModule(&gatemodule.GatewayModule{
-				BaseModule: module.BaseModule{
-					ModuleID: "gate001",
-				},
-			})
-			this.addModule(&gatemodule.GatewayModule{
-				BaseModule: module.BaseModule{
-					ModuleID: "gate002",
-				},
-			})
+			this.addModule(gatemodule.NewGatewayModule("gate001"))
+			this.addModule(gatemodule.NewGatewayModule("gate002"))
 		}
 	}
 	return this.getModuleSlice()

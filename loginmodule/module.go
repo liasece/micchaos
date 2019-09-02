@@ -14,6 +14,12 @@ type LoginModule struct {
 	HandlerServer   HandlerServer
 }
 
+func NewLoginModule(moduleid string) *LoginModule {
+	res := &LoginModule{}
+	res.BaseModule.SetModuleID(moduleid)
+	return res
+}
+
 func (this *LoginModule) AfterInitModule() {
 	this.BaseModule.AfterInitModule()
 

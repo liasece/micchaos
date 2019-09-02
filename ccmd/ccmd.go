@@ -93,3 +93,7 @@ type CS_EnterGame struct {
 
 type SC_ResEnterGame struct {
 }
+
+type SC_Tips struct {
+	Message string
+}

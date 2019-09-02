@@ -106,6 +106,11 @@ func (this *HandlerClient) OnCS_AccountRegister(
 			}
 			this.SendMsgToClient(session.GetBindServer("gate"),
 				session.GetConnectID(), send)
+			send1 := &ccmd.SC_Tips{
+				Message: "换个用户名再试",
+			}
+			this.SendMsgToClient(session.GetBindServer("gate"),
+				session.GetConnectID(), send1)
 		}
 	}
 }

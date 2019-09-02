@@ -25,7 +25,7 @@ var Client = {
 					res._msgid = dataview.getUint16(4);
 				} else {
 					if(res._dataArray.byteLength >= res._totalSize) {
-						var data = convertArrayToString(res._dataArray.slice(6));
+						var data = convertArrayToString(res._dataArray.slice(6,res._totalSize));
 						var topobj = JSON.parse(data);
 						res._dataArray = res._dataArray.slice(res._totalSize);
 						res._inmsg = false;

@@ -19,5 +19,5 @@ func main() {
 	}
 
 	// app 开始运行 阻塞
-	app.Run()
+	app.RunAndBlock()
 }
