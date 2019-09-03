@@ -8,6 +8,7 @@ import (
 	"github.com/liasece/micserver/util"
 	"playermodule/boxes"
 	"reflect"
+	"time"
 )
 
 type TmpPlayer struct {
@@ -46,9 +47,22 @@ func (this *HandlerClient) OnForwardFromGate(smsg *servercomm.SForwardFromGate) 
 		"MsgName[%s] Data[%s]",
 		top.MsgName, string(smsg.Data))
 
+	this.msgCount++
+	now := time.Now().UnixNano()
+	if now-this.lastCheckTime > 1*1000*1000*1000 {
+		this.lastCheckTime = now
+		if this.msgCount != 0 {
+			this.Error("本秒处理消息 %d", this.msgCount)
+		}
+		this.msgCount = 0
+	}
+
+	se := session.Session{}
+	se.FromMap(smsg.Session)
+
 	// 从消息处理映射集合找到对应的处理函数并且执行
 	if f, ok := this.mappingFunc[top.MsgName]; ok {
-		f(smsg.Session, top.Data)
+		f(se, top.Data)
 	}
 }
 
@@ -93,6 +107,7 @@ func (this *HandlerClient) OnCS_AccountRegister(
 				Code:      0,
 				Message:   "注册成功",
 				ConnectID: session.GetConnectID(),
+				Account:   newaccount.Account.GetMsg(),
 			}
 			this.SendMsgToClient(session.GetBindServer("gate"),
 				session.GetConnectID(), send)

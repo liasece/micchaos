@@ -12,6 +12,9 @@ type LoginModule struct {
 	mongo_userinfos *mongodb.UserInfos
 	HandlerClient   HandlerClient
 	HandlerServer   HandlerServer
+
+	lastCheckTime int64
+	msgCount      int64
 }
 
 func NewLoginModule(moduleid string) *LoginModule {

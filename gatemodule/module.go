@@ -10,6 +10,7 @@ import (
 	"github.com/liasece/micserver/module"
 	"github.com/liasece/micserver/msg"
 	"io"
+	"time"
 )
 
 type GatewayModule struct {
@@ -17,6 +18,9 @@ type GatewayModule struct {
 	testSeqTimes    int64
 	testCheckTimeNS int64
 	testSwitch      bool
+
+	lastCheckTime int64
+	msgCount      int64
 }
 
 func NewGatewayModule(moduleid string) *GatewayModule {
@@ -30,7 +34,7 @@ func (this *GatewayModule) AfterInitModule() {
 	// 调用父类方法
 	this.BaseModule.AfterInitModule()
 	// 当收到客户端发过来的消息时
-	this.RegOnNewClient(this.onNewClient)
+	// this.RegOnNewClient(this.onNewClient)
 	this.RegOnRecvClientMsg(this.onRecvClientMsg)
 }
 
@@ -41,6 +45,17 @@ func (this *GatewayModule) onRecvClientMsg(
 	top := &ccmd.CS_TopLayer{}
 	json.Unmarshal(msgbin.ProtoData, top)
 	this.Debug("收到TCP消息 MsgName[%s]", top.MsgName)
+
+	this.msgCount++
+	now := time.Now().UnixNano()
+	if now-this.lastCheckTime > 1*1000*1000*1000 {
+		this.lastCheckTime = now
+		if this.msgCount != 0 {
+			this.Error("本秒处理消息 %d", this.msgCount)
+		}
+		this.msgCount = 0
+	}
+
 	msgname := top.MsgName
 	servertype := ccmd.GetServerTypeByMsgName(msgname)
 	if servertype == "" {

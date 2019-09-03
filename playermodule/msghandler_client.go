@@ -14,7 +14,8 @@ type HandlerClient struct {
 
 	lastCheckTime int64
 	msgCount      int64
-	mappingFunc   map[string]func(session session.Session, data []byte)
+
+	mappingFunc map[string]func(session session.Session, data []byte)
 }
 
 func (this *HandlerClient) Init(mod *PlayerModule) {
@@ -42,6 +43,7 @@ func (this *HandlerClient) OnForwardFromGate(smsg *servercomm.SForwardFromGate) 
 	json.Unmarshal(smsg.Data, top)
 	this.Info("[HandlerClient.OnRecvClientMsg] 收到 Client 消息 %s",
 		top.MsgName)
+
 	this.msgCount++
 	now := time.Now().UnixNano()
 	if now-this.lastCheckTime > 1*1000*1000*1000 {
@@ -51,9 +53,13 @@ func (this *HandlerClient) OnForwardFromGate(smsg *servercomm.SForwardFromGate) 
 		}
 		this.msgCount = 0
 	}
+
+	se := session.Session{}
+	se.FromMap(smsg.Session)
+
 	// 根据消息名映射消息处理函数
 	if f, ok := this.mappingFunc[top.MsgName]; ok {
-		f(smsg.Session, top.Data)
+		f(se, top.Data)
 	} else {
 		this.Error("未知的消息 %s", top.MsgName)
 	}
