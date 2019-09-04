@@ -45,6 +45,15 @@
 						var item = document.createElement("div");
 						item.innerHTML = "<b>Connected</b>";
 						appendLog(item);
+
+						var testobj = {
+							"LoginName":"ws001",
+							"PassWordMD5":"客户端测试发送1"
+						}
+						var item = document.createElement("div");
+						item.innerHTML = "<b>Send:["+testobj.PassWordMD5+"]</b>";
+						appendLog(item);
+						client.send("ccmd.CS_AccountRegister",testobj);
 					},
 					onclose: function (evt) {
 						var item = document.createElement("div");
