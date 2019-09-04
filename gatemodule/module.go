@@ -20,8 +20,6 @@ type GatewayModule struct {
 	testCheckTimeNS int64
 	testSwitch      bool
 
-	lastCheckTime int64
-	msgCount      int64
 	// 模块的负载
 	ClientMsgLoad          util.Load
 	lastCheckClientMsgLoad int64
