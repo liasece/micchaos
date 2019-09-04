@@ -1,6 +1,7 @@
 package main
 
 import (
+	"ccmd"
 	"fmt"
 	"github.com/liasece/micserver/log"
 	"testclient/client"
@@ -19,9 +20,14 @@ func run(ch chan struct{}, i int) {
 		return
 	}
 	for i := 0; i < 100000; i++ {
-		c.SendMsg(c.GetRegsiterMsg())
+		if i < 10 {
+			c.SendMsg(c.GetRegsiterMsg())
+		} else {
+			// 进入游戏
+			c.SendMsg(&ccmd.CS_EnterGame{})
+		}
 	}
-	time.Sleep(time.Second * 30)
+	time.Sleep(time.Second * 1)
 }
 
 func main() {
