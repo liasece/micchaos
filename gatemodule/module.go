@@ -34,7 +34,7 @@ func (this *GatewayModule) AfterInitModule() {
 	// 调用父类方法
 	this.BaseModule.AfterInitModule()
 	// 当收到客户端发过来的消息时
-	// this.RegOnNewClient(this.onNewClient)
+	this.RegOnNewClient(this.onNewClient)
 	this.RegOnRecvClientMsg(this.onRecvClientMsg)
 }
 
@@ -88,8 +88,8 @@ func (this *GatewayModule) onNewClient(client *connect.Client) {
 		this.Info("ws.Upgrade")
 	}
 	// websocket 需要劫持底层的发送及接收流程
-	client.RegDoReadTCPBytes(this.doReadWSBytes)
-	client.RegDoSendTCPBytes(this.doSendWSBytes)
+	client.RegDoReadBytes(this.doReadWSBytes)
+	client.RegDoSendBytes(this.doSendWSBytes)
 }
 
 type wsState struct {
