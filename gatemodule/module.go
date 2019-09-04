@@ -81,7 +81,7 @@ func (this *GatewayModule) onRecvClientMsg(
 
 // 在创建新的连接时，将目标连接提升为 websocket 连接
 func (this *GatewayModule) onNewClient(client *connect.Client) {
-	_, err := ws.Upgrade(client.Conn)
+	_, err := ws.Upgrade(client.IConnection)
 	if err != nil {
 		this.Error("ws.Upgrade Err[%s]", err.Error())
 	} else {
