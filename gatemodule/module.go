@@ -9,6 +9,7 @@ import (
 	"github.com/liasece/micserver/connect"
 	"github.com/liasece/micserver/module"
 	"github.com/liasece/micserver/msg"
+	"github.com/liasece/micserver/util"
 	"io"
 	"time"
 )
@@ -21,6 +22,9 @@ type GatewayModule struct {
 
 	lastCheckTime int64
 	msgCount      int64
+	// 模块的负载
+	ClientMsgLoad          util.Load
+	lastCheckClientMsgLoad int64
 }
 
 func NewGatewayModule(moduleid string) *GatewayModule {
@@ -34,8 +38,11 @@ func (this *GatewayModule) AfterInitModule() {
 	// 调用父类方法
 	this.BaseModule.AfterInitModule()
 	// 当收到客户端发过来的消息时
-	this.RegOnNewClient(this.onNewClient)
+	// this.RegOnNewClient(this.onNewClient)
 	this.RegOnRecvClientMsg(this.onRecvClientMsg)
+
+	// 负载log
+	this.TimerManager.RegTimer(time.Second*1, 0, false, this.watchClientMsgLoadToLog)
 }
 
 // 当收到消息时调用
@@ -46,15 +53,7 @@ func (this *GatewayModule) onRecvClientMsg(
 	json.Unmarshal(msgbin.ProtoData, top)
 	this.Debug("收到TCP消息 MsgName[%s]", top.MsgName)
 
-	this.msgCount++
-	now := time.Now().UnixNano()
-	if now-this.lastCheckTime > 1*1000*1000*1000 {
-		this.lastCheckTime = now
-		if this.msgCount != 0 {
-			this.Error("本秒处理消息 %d", this.msgCount)
-		}
-		this.msgCount = 0
-	}
+	this.ClientMsgLoad.AddLoad(1)
 
 	msgname := top.MsgName
 	servertype := ccmd.GetServerTypeByMsgName(msgname)
@@ -182,4 +181,15 @@ func (this *GatewayModule) doReadWSBytes(reader io.ReadWriter, istate interface{
 			fmt.Errorf("GatewayModule.doReadWSBytes istate.(*wsState) !ok [%+v]",
 				istate)
 	}
+}
+
+func (this *GatewayModule) watchClientMsgLoadToLog(_ time.Duration) bool {
+	load := this.ClientMsgLoad.GetLoad()
+	incValue := load - this.lastCheckClientMsgLoad
+	if incValue > 0 {
+		this.Info("[GatewayModule.watchClientMsgLoadToLog] Within 5 sec load:[%d]",
+			incValue)
+	}
+	this.lastCheckClientMsgLoad = load
+	return true
 }

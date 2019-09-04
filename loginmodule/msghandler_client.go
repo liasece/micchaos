@@ -18,6 +18,10 @@ type TmpPlayer struct {
 type HandlerClient struct {
 	*LoginModule
 	mappingFunc map[string]func(session session.Session, data []byte)
+
+	// 模块的负载
+	ClientMsgLoad          util.Load
+	lastCheckClientMsgLoad int64
 }
 
 func (this *HandlerClient) Init(mod *LoginModule) {
@@ -37,6 +41,8 @@ func (this *HandlerClient) Init(mod *LoginModule) {
 		this.mappingFunc[msgName] =
 			hf.Method(i).Interface().(func(session session.Session, data []byte))
 	}
+
+	this.TimerManager.RegTimer(time.Second*1, 0, false, this.watchClientMsgLoadToLog)
 }
 
 func (this *HandlerClient) OnForwardFromGate(smsg *servercomm.SForwardFromGate) {
@@ -47,15 +53,7 @@ func (this *HandlerClient) OnForwardFromGate(smsg *servercomm.SForwardFromGate) 
 		"MsgName[%s] Data[%s]",
 		top.MsgName, string(smsg.Data))
 
-	this.msgCount++
-	now := time.Now().UnixNano()
-	if now-this.lastCheckTime > 1*1000*1000*1000 {
-		this.lastCheckTime = now
-		if this.msgCount != 0 {
-			this.Error("本秒处理消息 %d", this.msgCount)
-		}
-		this.msgCount = 0
-	}
+	this.ClientMsgLoad.AddLoad(1)
 
 	se := session.Session{}
 	se.FromMap(smsg.Session)
@@ -186,4 +184,15 @@ func (this *HandlerClient) SendMsgToClient(gateid string,
 	to string, msg interface{}) {
 	btop := ccmd.GetSCTopLayer(msg)
 	this.LoginModule.SendBytesToClient(gateid, to, 0, btop)
+}
+
+func (this *HandlerClient) watchClientMsgLoadToLog(_ time.Duration) bool {
+	load := this.ClientMsgLoad.GetLoad()
+	incValue := load - this.lastCheckClientMsgLoad
+	if incValue > 0 {
+		this.Info("[HandlerClient.watchClientMsgLoadToLog] Within 5 sec load:[%d]",
+			incValue)
+	}
+	this.lastCheckClientMsgLoad = load
+	return true
 }

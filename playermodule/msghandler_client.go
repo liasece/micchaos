@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/liasece/micserver/servercomm"
 	"github.com/liasece/micserver/session"
+	"github.com/liasece/micserver/util"
 	"reflect"
 	"time"
 )
@@ -12,8 +13,9 @@ import (
 type HandlerClient struct {
 	*PlayerModule
 
-	lastCheckTime int64
-	msgCount      int64
+	// 模块的负载
+	ClientMsgLoad          util.Load
+	lastCheckClientMsgLoad int64
 
 	mappingFunc map[string]func(session session.Session, data []byte)
 }
@@ -35,6 +37,8 @@ func (this *HandlerClient) Init(mod *PlayerModule) {
 		this.mappingFunc[msgName] =
 			hf.Method(i).Interface().(func(session session.Session, data []byte))
 	}
+
+	this.TimerManager.RegTimer(time.Second*1, 0, false, this.watchClientMsgLoadToLog)
 }
 
 //
@@ -44,15 +48,7 @@ func (this *HandlerClient) OnForwardFromGate(smsg *servercomm.SForwardFromGate) 
 	this.Info("[HandlerClient.OnRecvClientMsg] 收到 Client 消息 %s",
 		top.MsgName)
 
-	this.msgCount++
-	now := time.Now().UnixNano()
-	if now-this.lastCheckTime > 1*1000*1000*1000 {
-		this.lastCheckTime = now
-		if this.msgCount != 0 {
-			this.Error("本秒处理消息 %d", this.msgCount)
-		}
-		this.msgCount = 0
-	}
+	this.ClientMsgLoad.AddLoad(1)
 
 	se := session.Session{}
 	se.FromMap(smsg.Session)
@@ -76,4 +72,15 @@ func (this *HandlerClient) OnCS_EnterGame(session session.Session, data []byte) 
 	} else {
 		this.Error("获取Player失败 %+v", session)
 	}
+}
+
+func (this *HandlerClient) watchClientMsgLoadToLog(_ time.Duration) bool {
+	load := this.ClientMsgLoad.GetLoad()
+	incValue := load - this.lastCheckClientMsgLoad
+	if incValue > 0 {
+		this.Info("[HandlerClient.watchClientMsgLoadToLog] Within 5 sec load:[%d]",
+			incValue)
+	}
+	this.lastCheckClientMsgLoad = load
+	return true
 }
