@@ -74,12 +74,12 @@ func (this *HandlerClient) OnCS_EnterGame(session session.Session, data []byte) 
 	}
 }
 
-func (this *HandlerClient) watchClientMsgLoadToLog(_ time.Duration) bool {
+func (this *HandlerClient) watchClientMsgLoadToLog(dt time.Duration) bool {
 	load := this.ClientMsgLoad.GetLoad()
 	incValue := load - this.lastCheckClientMsgLoad
 	if incValue > 0 {
-		this.Info("[HandlerClient.watchClientMsgLoadToLog] Within 5 sec load:[%d]",
-			incValue)
+		this.Info("[HandlerClient.watchClientMsgLoadToLog] Within %d sec load:[%d]",
+			int64(dt.Seconds()), incValue)
 	}
 	this.lastCheckClientMsgLoad = load
 	return true
