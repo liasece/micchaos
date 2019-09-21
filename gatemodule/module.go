@@ -36,7 +36,7 @@ func (this *GatewayModule) AfterInitModule() {
 	// 调用父类方法
 	this.BaseModule.AfterInitModule()
 	// 当收到客户端发过来的消息时
-	// this.RegOnNewClient(this.onNewClient)
+	this.RegOnNewClient(this.onNewClient)
 	this.RegOnRecvClientMsg(this.onRecvClientMsg)
 
 	// 负载log
