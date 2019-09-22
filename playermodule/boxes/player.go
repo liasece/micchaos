@@ -4,6 +4,7 @@ import (
 	"ccmd"
 	"github.com/liasece/micserver/log"
 	"github.com/liasece/micserver/module"
+	"github.com/liasece/micserver/roc"
 	"github.com/liasece/micserver/session"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -26,6 +27,18 @@ func (this *Player) GetPrimaryKey() bson.M {
 	return bson.M{
 		"account.uuid": this.Account.UUID,
 	}
+}
+
+func (this *Player) GetObjID() string {
+	return this.Account.UUID
+}
+
+func (this *Player) GetObjType() string {
+	return "Player"
+}
+
+func (this *Player) ROCCall(path *roc.ROCPath, arg []byte) ([]byte, error) {
+	return nil, nil
 }
 
 // after loaded from database

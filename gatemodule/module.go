@@ -11,6 +11,7 @@ import (
 	"github.com/liasece/micserver/msg"
 	"github.com/liasece/micserver/util"
 	"io"
+	"strings"
 	"time"
 )
 
@@ -78,15 +79,18 @@ func (this *GatewayModule) onRecvClientMsg(
 
 // 在创建新的连接时，将目标连接提升为 websocket 连接
 func (this *GatewayModule) onNewClient(client *connect.Client) {
-	_, err := ws.Upgrade(client.IConnection)
-	if err != nil {
-		this.Error("ws.Upgrade Err[%s]", err.Error())
-	} else {
-		this.Info("ws.Upgrade")
+	if strings.Index(client.RemoteAddr(), "127.0.0.1") < 0 {
+		this.Info("尝试升级 websocket 连接 %s", client.RemoteAddr())
+		_, err := ws.Upgrade(client.IConnection)
+		if err != nil {
+			this.Error("ws.Upgrade Err[%s]", err.Error())
+		} else {
+			this.Info("ws.Upgrade")
+		}
+		// websocket 需要劫持底层的发送及接收流程
+		client.RegDoReadBytes(this.doReadWSBytes)
+		client.RegDoSendBytes(this.doSendWSBytes)
 	}
-	// websocket 需要劫持底层的发送及接收流程
-	client.RegDoReadBytes(this.doReadWSBytes)
-	client.RegDoSendBytes(this.doSendWSBytes)
 }
 
 type wsState struct {

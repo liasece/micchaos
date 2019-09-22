@@ -19,7 +19,7 @@ func run(ch chan struct{}, i int) {
 	if err != nil {
 		return
 	}
-	for i := 0; i < 100000; i++ {
+	for i := 0; i < 1; i++ {
 		if i < 10 {
 			c.SendMsg(c.GetRegsiterMsg())
 		} else {
@@ -31,7 +31,7 @@ func run(ch chan struct{}, i int) {
 }
 
 func main() {
-	threadsum := 10
+	threadsum := 1
 	stopchan := make(chan struct{}, threadsum)
 	for i := 0; i < threadsum; i++ {
 		go run(stopchan, i)

@@ -50,4 +50,7 @@ func (this *PlayerModule) AfterInitModule() {
 
 	this.RegOnForwardToServer(this.HandlerServer.OnForwardToServer)
 	this.RegOnForwardFromGate(this.HandlerServer.OnForwardFromGate)
+
+	// 初始化业务逻辑
+	this.BaseModule.ROCManager.NewObjectType("Player")
 }

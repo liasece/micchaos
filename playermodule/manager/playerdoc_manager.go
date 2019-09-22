@@ -38,8 +38,14 @@ func (this *PlayerDocManager) GetPlayerDoc(uuid string) *boxes.Player {
 
 func (this *PlayerDocManager) loadOrStore(
 	uuid string, p *boxes.Player) *boxes.Player {
-	if vi, ok := this.docs.LoadOrStore(uuid, p); ok {
+	if vi, isLoad := this.docs.LoadOrStore(uuid, p); !isLoad {
 		if p, ok := vi.(*boxes.Player); ok {
+			err := this.mod.ROCManager.RegObj(p)
+			if err != nil {
+				this.Error("mod.ROCManager.RegObj Err[%s]", err.Error())
+			} else {
+				this.Info("mod.ROCManager.RegObj OK")
+			}
 			return p
 		}
 	}
