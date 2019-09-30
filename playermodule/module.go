@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/liasece/micserver/module"
 	"mongodb"
-	// "playermodule/boxes"
 	"playermodule/manager"
 )
 
@@ -26,6 +25,9 @@ func NewPlayerModule(moduleid string) *PlayerModule {
 func (this *PlayerModule) AfterInitModule() {
 	this.BaseModule.AfterInitModule()
 
+	// 初始化业务逻辑
+	this.BaseModule.ROCManager.NewObjectType("Player")
+	// 事件处理器
 	this.HandlerClient.Init(this)
 	this.HandlerServer.Init(this)
 
@@ -50,7 +52,4 @@ func (this *PlayerModule) AfterInitModule() {
 
 	this.RegOnForwardToServer(this.HandlerServer.OnForwardToServer)
 	this.RegOnForwardFromGate(this.HandlerServer.OnForwardFromGate)
-
-	// 初始化业务逻辑
-	this.BaseModule.ROCManager.NewObjectType("Player")
 }

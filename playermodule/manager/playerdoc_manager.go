@@ -3,28 +3,29 @@ package manager
 import (
 	"github.com/liasece/micserver/log"
 	"github.com/liasece/micserver/module"
+	"github.com/liasece/micserver/roc"
 	"go.mongodb.org/mongo-driver/bson"
 	"mongodb"
 	"playermodule/boxes"
-	"sync"
 )
 
 type PlayerDocManager struct {
 	*log.Logger
 
 	mod             *module.BaseModule
-	docs            sync.Map
 	mongo_userinfos *mongodb.UserInfos
+	playerRoc       *roc.ROC
 }
 
 func (this *PlayerDocManager) Init(mod *module.BaseModule,
 	userinfos *mongodb.UserInfos) {
 	this.mod = mod
 	this.mongo_userinfos = userinfos
+	this.playerRoc = this.mod.ROCManager.GetROC("Player")
 }
 
 func (this *PlayerDocManager) getPlayerDoc(uuid string) *boxes.Player {
-	if vi, ok := this.docs.Load(uuid); ok {
+	if vi, ok := this.playerRoc.GetObj(uuid); ok {
 		if p, ok := vi.(*boxes.Player); ok {
 			return p
 		}
@@ -38,14 +39,9 @@ func (this *PlayerDocManager) GetPlayerDoc(uuid string) *boxes.Player {
 
 func (this *PlayerDocManager) loadOrStore(
 	uuid string, p *boxes.Player) *boxes.Player {
-	if vi, isLoad := this.docs.LoadOrStore(uuid, p); !isLoad {
+	if vi, isLoad := this.playerRoc.GetOrRegBoj(uuid, p); !isLoad {
 		if p, ok := vi.(*boxes.Player); ok {
-			err := this.mod.ROCManager.RegObj(p)
-			if err != nil {
-				this.Error("mod.ROCManager.RegObj Err[%s]", err.Error())
-			} else {
-				this.Info("mod.ROCManager.RegObj OK")
-			}
+			this.Info("mod.ROCManager.RegObj OK")
 			return p
 		}
 	}

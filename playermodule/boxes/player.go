@@ -53,6 +53,8 @@ func (this *Player) AfterOnline(session session.Session) {
 
 	send := &ccmd.SC_ResEnterGame{}
 	this.SendMsg(send)
+
+	this.mod.ROCCallNR("Player["+this.UUID+"].Regdata", nil)
 }
 
 func (this *Player) SendMsg(msg interface{}) {
