@@ -38,6 +38,7 @@ func (this *Player) GetObjType() string {
 }
 
 func (this *Player) ROCCall(path *roc.ROCPath, arg []byte) ([]byte, error) {
+	this.Info("ROC调用执行: %+v,%+v", path, arg)
 	return nil, nil
 }
 
