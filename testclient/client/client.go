@@ -52,7 +52,9 @@ func (this *Client) GetRegsiterMsg() *ccmd.CS_AccountRegister {
 }
 
 func (this *Client) Dial(addr string) error {
-	client, err := connect.ClientDial(addr, this.onConnectRecv, nil)
+	client := &connect.Client{}
+	client.SetLogger(this.Logger)
+	err := client.Dial(addr, this.onConnectRecv, nil)
 	if err != nil {
 		this.Error("connect.ClientDial(%s) err:%s", addr, err.Error())
 		return err
