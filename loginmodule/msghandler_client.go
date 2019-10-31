@@ -45,7 +45,7 @@ func (this *HandlerClient) Init(mod *LoginModule) {
 	this.TimerManager.RegTimer(time.Second*1, 0, false, this.watchClientMsgLoadToLog)
 }
 
-func (this *HandlerClient) OnForwardFromGate(smsg *servercomm.SForwardFromGate) {
+func (this *HandlerClient) OnClientMessage(smsg *servercomm.ClientMessage) {
 	top := &ccmd.CS_TopLayer{}
 	json.Unmarshal(smsg.Data, top)
 

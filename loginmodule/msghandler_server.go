@@ -12,10 +12,10 @@ func (this *HandlerServer) Init(mod *LoginModule) {
 	this.LoginModule = mod
 }
 
-func (this *HandlerServer) OnForwardToServer(smsg *servercomm.SForwardToServer) {
-	this.Info("[HandlerServer.OnForwardToServer] 收到 Server 消息 %d", smsg.MsgID)
+func (this *HandlerServer) OnServerMessage(smsg *servercomm.ServerMessage) {
+	this.Info("[HandlerServer.OnServerMessage] 收到 Server 消息 %d", smsg.MsgID)
 }
 
-func (this *HandlerServer) OnForwardFromGate(smsg *servercomm.SForwardFromGate) {
-	this.HandlerClient.OnForwardFromGate(smsg)
+func (this *HandlerServer) OnClientMessage(smsg *servercomm.ClientMessage) {
+	this.HandlerClient.OnClientMessage(smsg)
 }

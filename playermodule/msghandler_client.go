@@ -42,7 +42,7 @@ func (this *HandlerClient) Init(mod *PlayerModule) {
 }
 
 //
-func (this *HandlerClient) OnForwardFromGate(smsg *servercomm.SForwardFromGate) {
+func (this *HandlerClient) OnClientMessage(smsg *servercomm.ClientMessage) {
 	top := &ccmd.CS_TopLayer{}
 	json.Unmarshal(smsg.Data, top)
 	this.Info("[HandlerClient.OnRecvClientMsg] 收到 Client 消息 %s",
