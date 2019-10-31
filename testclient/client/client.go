@@ -25,7 +25,7 @@ func (this *Client) Init(name, passwd string) {
 	this.CmdHandler.Init(this)
 }
 
-func (this *Client) onConnectRecv(conn *connect.Client,
+func (this *Client) OnRecvMessage(client *connect.Client,
 	msgbinary *msg.MessageBinary) {
 	topmsg := &ccmd.SC_TopLayer{}
 	json.Unmarshal(msgbinary.ProtoData, topmsg)
@@ -35,6 +35,10 @@ func (this *Client) onConnectRecv(conn *connect.Client,
 	} else {
 		this.Error("未知的消息 MsgName[%s]", topmsg.MsgName)
 	}
+}
+
+func (this *Client) OnClose(client *connect.Client) {
+	this.Debug("连接关闭")
 }
 
 func (this *Client) GetLoginMsg() *ccmd.CS_AccountLogin {
@@ -54,7 +58,7 @@ func (this *Client) GetRegsiterMsg() *ccmd.CS_AccountRegister {
 func (this *Client) Dial(addr string) error {
 	client := &connect.Client{}
 	client.SetLogger(this.Logger)
-	err := client.Dial(addr, this.onConnectRecv, nil)
+	err := client.DialTCP(addr, this)
 	if err != nil {
 		this.Error("connect.ClientDial(%s) err:%s", addr, err.Error())
 		return err
