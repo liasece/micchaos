@@ -3,12 +3,12 @@ package main
 import (
 	"github.com/liasece/micserver"
 	"github.com/liasece/micserver/log"
-	"github.com/liasece/micserver/util"
+	"github.com/liasece/micserver/util/monitor"
 )
 
 func main() {
 	// 初始化性能监控
-	util.BindPprof("", 8888)
+	monitor.BindPprof("", 8888)
 
 	// 初始化 MicServer
 	app, err := micserver.CreateApp(GetInitManger().GetConfigPath(),

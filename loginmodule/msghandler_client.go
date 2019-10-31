@@ -1,14 +1,17 @@
 package loginmodule
 
 import (
+	"reflect"
+	"time"
+
 	"ccmd"
 	"encoding/json"
 	"github.com/liasece/micserver/servercomm"
 	"github.com/liasece/micserver/session"
-	"github.com/liasece/micserver/util"
+	"github.com/liasece/micserver/util/math"
+	"github.com/liasece/micserver/util/monitor"
+	"github.com/liasece/micserver/util/uid"
 	"playermodule/boxes"
-	"reflect"
-	"time"
 )
 
 type TmpPlayer struct {
@@ -20,7 +23,7 @@ type HandlerClient struct {
 	mappingFunc map[string]func(session session.Session, data []byte)
 
 	// 模块的负载
-	ClientMsgLoad          util.Load
+	ClientMsgLoad          monitor.Load
 	lastCheckClientMsgLoad int64
 }
 
@@ -70,17 +73,17 @@ func (this *HandlerClient) OnCS_AccountRegister(
 	msg := &ccmd.CS_AccountRegister{}
 	json.Unmarshal(data, msg)
 	this.Debug("玩家请求注册 %s", string(data))
-	tmpuuid, err := util.NewUniqueID(101)
+	tmpuuid, err := uid.NewUniqueID(101)
 	if err != nil {
 		this.Error("UUID构建错误 %s", err.Error())
 		return
 	}
-	salt, errGSalt := util.GenerateRandomString(16)
+	salt, errGSalt := math.GenerateRandomString(16)
 	if errGSalt != nil {
 		this.Error("计算生成盐错误 %s", errGSalt.Error())
 		return
 	}
-	pswmd5ws := util.HmacSha256ByString(msg.PassWordMD5, salt)
+	pswmd5ws := math.HmacSha256ByString(msg.PassWordMD5, salt)
 	confirm := &TmpPlayer{}
 	newaccount := &TmpPlayer{}
 	newaccount.Account = &boxes.Account{}
@@ -147,7 +150,7 @@ func (this *HandlerClient) OnCS_AccountLogin(
 		this.SendMsgToClient(session.GetBindServer("gate"),
 			session.GetConnectID(), send)
 	} else {
-		pswmd5ws := util.HmacSha256ByString(msg.PassWordMD5,
+		pswmd5ws := math.HmacSha256ByString(msg.PassWordMD5,
 			tmpplayer.Account.PassWordMD5WSSalt)
 		if tmpplayer.Account.PassWordMD5WS != pswmd5ws {
 			// 密码错误

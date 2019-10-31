@@ -6,7 +6,7 @@ import (
 	"github.com/liasece/micserver/connect"
 	"github.com/liasece/micserver/log"
 	"github.com/liasece/micserver/msg"
-	"github.com/liasece/micserver/util"
+	"github.com/liasece/micserver/util/math"
 )
 
 type Client struct {
@@ -44,14 +44,14 @@ func (this *Client) OnClose(client *connect.Client) {
 func (this *Client) GetLoginMsg() *ccmd.CS_AccountLogin {
 	res := &ccmd.CS_AccountLogin{}
 	res.LoginName = this.LoginName
-	res.PassWordMD5 = util.HmacSha256ByString(this.Passwd, this.LoginName)
+	res.PassWordMD5 = math.HmacSha256ByString(this.Passwd, this.LoginName)
 	return res
 }
 
 func (this *Client) GetRegsiterMsg() *ccmd.CS_AccountRegister {
 	res := &ccmd.CS_AccountRegister{}
 	res.LoginName = this.LoginName
-	res.PassWordMD5 = util.HmacSha256ByString(this.Passwd, this.LoginName)
+	res.PassWordMD5 = math.HmacSha256ByString(this.Passwd, this.LoginName)
 	return res
 }
 

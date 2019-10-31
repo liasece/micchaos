@@ -10,7 +10,7 @@ import (
 	"github.com/liasece/micserver/connect"
 	"github.com/liasece/micserver/module"
 	"github.com/liasece/micserver/msg"
-	"github.com/liasece/micserver/util"
+	"github.com/liasece/micserver/util/monitor"
 )
 
 type GatewayModule struct {
@@ -20,7 +20,7 @@ type GatewayModule struct {
 	testSwitch      bool
 
 	// 模块的负载
-	ClientMsgLoad          util.Load
+	ClientMsgLoad          monitor.Load
 	lastCheckClientMsgLoad int64
 
 	// websocket 协议

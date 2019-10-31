@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"github.com/liasece/micserver/servercomm"
 	"github.com/liasece/micserver/session"
-	"github.com/liasece/micserver/util"
+	"github.com/liasece/micserver/util/monitor"
 	"reflect"
 	"time"
 )
@@ -14,7 +14,7 @@ type HandlerClient struct {
 	*PlayerModule
 
 	// 模块的负载
-	ClientMsgLoad          util.Load
+	ClientMsgLoad          monitor.Load
 	lastCheckClientMsgLoad int64
 
 	mappingFunc map[string]func(session session.Session, data []byte)
