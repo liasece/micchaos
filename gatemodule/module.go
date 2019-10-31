@@ -3,6 +3,7 @@ package gatemodule
 import (
 	"ccmd"
 	"encoding/json"
+	"net"
 	"strings"
 	"time"
 
@@ -22,6 +23,7 @@ type GatewayModule struct {
 	ClientMsgLoad          util.Load
 	lastCheckClientMsgLoad int64
 
+	// websocket 协议
 	ws WebSocket
 }
 
@@ -39,15 +41,14 @@ func (this *GatewayModule) AfterInitModule() {
 	// 初始化本地
 	this.ws.Init(this)
 	// 当收到客户端发过来的消息时
-	this.RegOnNewClient(this.onNewClient)
-	this.RegOnRecvClientMsg(this.onRecvClientMsg)
+	this.HookGate(this)
 
 	// 负载log
 	this.TimerManager.RegTimer(time.Second*1, 0, false, this.watchClientMsgLoadToLog)
 }
 
 // 当收到消息时调用
-func (this *GatewayModule) onRecvClientMsg(
+func (this *GatewayModule) OnRecvClientMsg(
 	conn *connect.Client, msgbin *msg.MessageBinary) {
 	// 所有客户端的消息都由 CS_TopLayer 包裹
 	top := &ccmd.CS_TopLayer{}
@@ -80,7 +81,7 @@ func (this *GatewayModule) onRecvClientMsg(
 }
 
 // 在创建新的连接时，将目标连接提升为 websocket 连接
-func (this *GatewayModule) onNewClient(client *connect.Client) {
+func (this *GatewayModule) OnNewClient(client *connect.Client) {
 	if strings.Index(client.RemoteAddr(), "127.0.0.1") < 0 {
 		this.Info("尝试升级 websocket 连接 %s", client.RemoteAddr())
 		_, err := this.ws.Upgrade(client.IConnection)
@@ -92,6 +93,9 @@ func (this *GatewayModule) onNewClient(client *connect.Client) {
 		// websocket 需要劫持底层的发送及接收流程
 		client.HookProtocal(&this.ws)
 	}
+}
+
+func (this *GatewayModule) OnAcceptClientConnect(conn net.Conn) {
 }
 
 func (this *GatewayModule) watchClientMsgLoadToLog(dt time.Duration) bool {

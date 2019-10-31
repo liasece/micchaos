@@ -50,6 +50,5 @@ func (this *PlayerModule) AfterInitModule() {
 	this.PlayerDocManager.Init(&this.BaseModule, this.mongo_userinfos)
 	this.PlayerDocManager.Logger = this.Logger
 
-	this.RegOnForwardToServer(this.HandlerServer.OnForwardToServer)
-	this.RegOnForwardFromGate(this.HandlerServer.OnForwardFromGate)
+	this.HookServer(&this.HandlerServer)
 }
