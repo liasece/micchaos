@@ -2,17 +2,14 @@ package gatemodule
 
 import (
 	"ccmd"
-	"encoding/hex"
 	"encoding/json"
-	"fmt"
-	"github.com/gobwas/ws"
+	"strings"
+	"time"
+
 	"github.com/liasece/micserver/connect"
 	"github.com/liasece/micserver/module"
 	"github.com/liasece/micserver/msg"
 	"github.com/liasece/micserver/util"
-	"io"
-	"strings"
-	"time"
 )
 
 type GatewayModule struct {
@@ -24,6 +21,8 @@ type GatewayModule struct {
 	// 模块的负载
 	ClientMsgLoad          util.Load
 	lastCheckClientMsgLoad int64
+
+	ws WebSocket
 }
 
 func NewGatewayModule(moduleid string) *GatewayModule {
@@ -36,6 +35,9 @@ func NewGatewayModule(moduleid string) *GatewayModule {
 func (this *GatewayModule) AfterInitModule() {
 	// 调用父类方法
 	this.BaseModule.AfterInitModule()
+
+	// 初始化本地
+	this.ws.Init(this)
 	// 当收到客户端发过来的消息时
 	this.RegOnNewClient(this.onNewClient)
 	this.RegOnRecvClientMsg(this.onRecvClientMsg)
@@ -81,107 +83,14 @@ func (this *GatewayModule) onRecvClientMsg(
 func (this *GatewayModule) onNewClient(client *connect.Client) {
 	if strings.Index(client.RemoteAddr(), "127.0.0.1") < 0 {
 		this.Info("尝试升级 websocket 连接 %s", client.RemoteAddr())
-		_, err := ws.Upgrade(client.IConnection)
+		_, err := this.ws.Upgrade(client.IConnection)
 		if err != nil {
 			this.Error("ws.Upgrade Err[%s]", err.Error())
 		} else {
 			this.Info("ws.Upgrade")
 		}
 		// websocket 需要劫持底层的发送及接收流程
-		client.RegDoReadBytes(this.doReadWSBytes)
-		client.RegDoSendBytes(this.doSendWSBytes)
-	}
-}
-
-type wsState struct {
-	header       ws.Header
-	remainUnRead int64
-}
-
-func (this *wsState) Init() {
-}
-
-func (this *GatewayModule) doSendWSBytes(writer io.ReadWriter, istate interface{},
-	data []byte) (n int, resstate interface{}, err error) {
-	if istate == nil {
-		newstate := &wsState{}
-		newstate.Init()
-		istate = newstate
-	}
-	if state, ok := istate.(*wsState); ok {
-		// Reset the Masked flag, server frames must not be masked as
-		// RFC6455 says.
-		// 取上次读到的头部信息
-		header := state.header
-		// 无计算掩码
-		header.Masked = false
-		// 长度
-		header.Length = int64(len(data))
-		if err = ws.WriteHeader(writer, header); err != nil {
-			// handle error
-			return
-		}
-		if n, err = writer.Write(data); err != nil {
-			// handle error
-			return
-		}
-		// 关闭 ws 层连接
-		if header.OpCode == ws.OpClose {
-			err = io.EOF
-		}
-		return
-	} else {
-		this.Error("GatewayModule.doSendWSBytes istate.(*wsState) !ok [%+v]",
-			istate)
-		return 0, istate,
-			fmt.Errorf("GatewayModule.doSendWSBytes istate.(*wsState) !ok [%+v]",
-				istate)
-	}
-}
-
-func (this *GatewayModule) doReadWSBytes(reader io.ReadWriter, istate interface{},
-	data []byte) (n int, resstate interface{}, err error) {
-	if istate == nil {
-		newstate := &wsState{}
-		newstate.Init()
-		istate = newstate
-	}
-	resstate = istate
-	if state, ok := istate.(*wsState); ok {
-		if state.remainUnRead <= 0 {
-			// 上一帧没有未读数据，开始读新的一帧
-			state.header, err = ws.ReadHeader(reader)
-			if err != nil {
-				// ReadHeader err
-				return
-			}
-			state.remainUnRead = state.header.Length
-		}
-		// 如果最大可读大小大于剩余未读数据大小，
-		// 需要限制data的长度防止读到下一帧帧头
-		readsize := int64(len(data))
-		if readsize > state.remainUnRead {
-			readsize = state.remainUnRead
-		}
-		// 读数据
-		n, err = reader.Read(data[:readsize])
-		// 剩余未读数据需要减少本次读取的大小
-		state.remainUnRead -= int64(n)
-		if err != nil {
-			// io.Read err
-			return
-		}
-		if state.header.Masked {
-			ws.Cipher(data, state.header.Mask, 0)
-		}
-		this.Info("WebSocket Recv[%s]", hex.EncodeToString(data[:n]))
-		return
-	} else {
-		this.Error("GatewayModule.doReadWSBytes istate.(*wsState) !ok [%+v]",
-			istate)
-		return 0, istate,
-			fmt.Errorf("GatewayModule.doReadWSBytes istate.(*wsState) !ok [%+v]",
-				istate)
+		client.HookProtocal(&this.ws)
 	}
 }
 
