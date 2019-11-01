@@ -52,17 +52,23 @@ func (this *InitManager) GetProgramModuleList() []module.IModule {
 		// 遍历所有的参数指定的模块名
 		for _, pid := range config.GetArgvModuleList() {
 			isDevelopment = false
-			stype := util.GetServerIDType(pid)
-			log.Debug("App 初始化 ServerType[%s] ServerID[%s]", stype, pid)
-			switch stype {
-			case "gate":
-				this.addModule(gatemodule.NewGatewayModule(pid))
-			case "player":
-				this.addModule(playermodule.NewPlayerModule(pid))
-			case "login":
-				this.addModule(loginmodule.NewLoginModule(pid))
-			default:
-				panic(fmt.Sprintf("无法解析的模块 %s:%s", stype, pid))
+			basepid := pid
+			for i := 0; i < 1; i++ {
+				if i != 0 {
+					pid = fmt.Sprint(basepid, "_", i)
+				}
+				stype := util.GetServerIDType(pid)
+				log.Debug("App 初始化 ServerType[%s] ServerID[%s]", stype, pid)
+				switch stype {
+				case "gate":
+					this.addModule(gatemodule.NewGatewayModule(pid))
+				case "player":
+					this.addModule(playermodule.NewPlayerModule(pid))
+				case "login":
+					this.addModule(loginmodule.NewLoginModule(pid))
+				default:
+					panic(fmt.Sprintf("无法解析的模块 %s:%s", stype, pid))
+				}
 			}
 		}
 
