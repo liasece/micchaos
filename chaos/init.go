@@ -45,7 +45,8 @@ func (this *InitManager) GetProgramModuleList() []module.IModule {
 		config.InitParse()
 		logpath := config.GetProp("logpath")
 		if logpath != "" {
-			log.AddLogFile(filepath.Join(logpath, "app.log"), true)
+			log.GetDefaultLogger().GetLogWriter().AddLogFile(
+				filepath.Join(logpath, "app.log"), true)
 		}
 		isDevelopment := true
 

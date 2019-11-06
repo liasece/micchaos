@@ -3,7 +3,6 @@ package main
 import (
 	"ccmd"
 	"fmt"
-	"github.com/liasece/micserver/log"
 	"testclient/client"
 	"time"
 )
@@ -40,5 +39,4 @@ func main() {
 		<-stopchan
 	}
 	time.Sleep(time.Millisecond * 400)
-	log.CloseLogger()
 }
