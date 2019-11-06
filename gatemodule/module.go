@@ -95,6 +95,11 @@ func (this *GatewayModule) OnNewClient(client *connect.Client) {
 	}
 }
 
+// 关闭客户端连接时触发
+func (this *GatewayModule) OnCloseClient(client *connect.Client) {
+	this.ROCCallNR("Player["+client.Session.GetUUID()+"].GateClose", nil)
+}
+
 func (this *GatewayModule) OnAcceptClientConnect(conn net.Conn) {
 }
 

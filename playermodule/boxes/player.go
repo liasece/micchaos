@@ -39,12 +39,21 @@ func (this *Player) GetObjType() string {
 
 func (this *Player) ROCCall(path *roc.ROCPath, arg []byte) ([]byte, error) {
 	this.Info("ROC调用执行: %+v,%+v", path, arg)
+	switch path.Move() {
+	case "GateClose":
+		this.OnGateClose()
+	}
 	return nil, nil
+}
+
+func (this *Player) OnGateClose() {
+	this.Info("Player连接关闭")
 }
 
 // after loaded from database
 func (this *Player) AfterLoad() {
 	this.Info("从数据库加载成功 %s", this.UUID)
+	this.Logger.SetTopic("Player[" + this.UUID + "]")
 }
 
 func (this *Player) AfterOnline(session session.Session) {
