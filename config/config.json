@@ -7,8 +7,8 @@
 			"//logpath":"/home/jansen/logs/",
 			"//":"isdaemon 用来告诉日志系统你是否需要在控制台显示log内容。",
 			"//":"如果你希望直接在终端运行并且希望日志显示在终端上，isdaemon 应为 false",
-			"//isdaemon":"true",
-			"msgthreadnum":"12",
+			"//isdaemon":true,
+			"msgthreadnum":12,
 			"database":"micworld",
 			"userinfos_collection":"userinfos",
 			"mongodb":"mongodb://127.0.0.1:27017"
@@ -21,7 +21,8 @@
 					"subnettcpaddr":":11001",
 					"//":"如果一个 module 具备 gatetcpaddr 配置项，",
 					"//":"那么这个 module 会初始化出 gateway 提供给外部客户端连接。",
-					"gatetcpaddr":":11002"
+					"gatetcpaddr":":11002",
+					"msgthreadnum":10
 				}
 			},
 			"//gate002":{
