@@ -2,6 +2,8 @@ package mongodb
 
 import (
 	"fmt"
+
+	"ccmd"
 	"github.com/liasece/micserver/module"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -33,13 +35,13 @@ func (this *UserInfos) Init(mod module.IModule, client *MongoClient) error {
 	this.client = client
 	this.mod = mod
 
-	databasename := this.mod.GetConfiger().GetSetting("database")
+	databasename := this.mod.GetConfiger().GetString(ccmd.ConfDataBase)
 	if databasename == "" {
 		return fmt.Errorf("empty database name")
 	} else {
 		this.database = this.client.Database(databasename)
 	}
-	collectionname := this.mod.GetConfiger().GetSetting("userinfos_collection")
+	collectionname := this.mod.GetConfiger().GetString(ccmd.ConfDBUserInfos)
 	if collectionname == "" {
 		return fmt.Errorf("empty collection name")
 	} else {

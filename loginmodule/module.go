@@ -2,8 +2,10 @@ package loginmodule
 
 import (
 	"fmt"
-	"github.com/liasece/micserver/module"
 	"mongodb"
+
+	"ccmd"
+	"github.com/liasece/micserver/module"
 )
 
 type LoginModule struct {
@@ -27,7 +29,7 @@ func (this *LoginModule) AfterInitModule() {
 	this.HandlerServer.Init(this)
 
 	// 数据库初始化
-	mongouri := this.Configer.GetSetting("mongodb")
+	mongouri := this.Configer.GetString(ccmd.ConfMongoDB)
 	if mongouri != "" {
 		this.Debug("连接 MondgoDB[%s]", mongouri)
 		var err error
