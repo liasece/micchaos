@@ -110,7 +110,7 @@ func (this *HandlerClient) OnCS_AccountRegister(
 				ConnectID: session.GetConnectID(),
 				Account:   newaccount.Account.GetMsg(),
 			}
-			this.SendMsgToClient(session.GetBindServer("gate"),
+			this.SendMsgToClient(session.GetBind("gate"),
 				session.GetConnectID(), send)
 		} else {
 			this.Info("目标玩家已经存在了，创建账号失败，已存在玩家的UUID[%s]",
@@ -120,12 +120,12 @@ func (this *HandlerClient) OnCS_AccountRegister(
 				Message:   "目标用户名已存在",
 				ConnectID: session.GetConnectID(),
 			}
-			this.SendMsgToClient(session.GetBindServer("gate"),
+			this.SendMsgToClient(session.GetBind("gate"),
 				session.GetConnectID(), send)
 			send1 := &ccmd.SC_Tips{
 				Message: "换个用户名再试",
 			}
-			this.SendMsgToClient(session.GetBindServer("gate"),
+			this.SendMsgToClient(session.GetBind("gate"),
 				session.GetConnectID(), send1)
 		}
 	}
@@ -147,7 +147,7 @@ func (this *HandlerClient) OnCS_AccountLogin(
 			Message:   "目标账号不存在",
 			ConnectID: session.GetConnectID(),
 		}
-		this.SendMsgToClient(session.GetBindServer("gate"),
+		this.SendMsgToClient(session.GetBind("gate"),
 			session.GetConnectID(), send)
 	} else {
 		pswmd5ws := math.HmacSha256ByString(msg.PassWordMD5,
@@ -160,7 +160,7 @@ func (this *HandlerClient) OnCS_AccountLogin(
 				Message:   "密码错误",
 				ConnectID: session.GetConnectID(),
 			}
-			this.SendMsgToClient(session.GetBindServer("gate"),
+			this.SendMsgToClient(session.GetBind("gate"),
 				session.GetConnectID(), send)
 		} else {
 			// 登陆成功
@@ -170,14 +170,14 @@ func (this *HandlerClient) OnCS_AccountLogin(
 				tmpplayer.Account.PassWordMD5WS,
 				tmpplayer.Account.PassWordMD5WSSalt)
 			session.SetUUID(tmpplayer.Account.UUID)
-			session.SyncToServer(&this.BaseModule, session.GetBindServer("gate"))
+			session.SyncToServer(&this.BaseModule, session.GetBind("gate"))
 			send := &ccmd.SC_ResAccountLogin{
 				Code:      0,
 				Message:   "login secess",
 				ConnectID: session.GetConnectID(),
 				Account:   tmpplayer.Account.GetMsg(),
 			}
-			this.SendMsgToClient(session.GetBindServer("gate"),
+			this.SendMsgToClient(session.GetBind("gate"),
 				session.GetConnectID(), send)
 		}
 	}

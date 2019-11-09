@@ -60,25 +60,25 @@ func (this *GatewayModule) OnRecvClientMsg(
 	this.ClientMsgLoad.AddLoad(1)
 
 	msgname := top.MsgName
-	servertype := ccmd.GetServerTypeByMsgName(msgname)
-	if servertype == "" {
+	moduletype := ccmd.GetModuleTypeByMsgName(msgname)
+	if moduletype == "" {
 		this.Error("未知消息类型-服务器类型映射 MsgName[%s] ServerType[%s]",
-			msgname, servertype)
+			msgname, moduletype)
 		return
 	}
-	serverid := conn.GetBindServer(servertype)
-	if serverid == "" {
+	moduleid := conn.GetBind(moduletype)
+	if moduleid == "" {
 		// 获取一个负载均衡的服务器ID
-		serverid = this.GetBalanceServerID(servertype)
-		if serverid != "" {
-			conn.SetBindServer(servertype, serverid)
+		moduleid = this.GetBalanceServerID(moduletype)
+		if moduleid != "" {
+			conn.SetBind(moduletype, moduleid)
 		}
 	}
-	if serverid != "" {
-		this.ForwardClientMsgToServer(conn, serverid, 0, msgbin.ProtoData)
+	if moduleid != "" {
+		this.ForwardClientMsgToServer(conn, moduleid, 0, msgbin.ProtoData)
 	} else {
 		this.Error("找不到合适的目标服务器 MsgName[%s] ServerType[%s]",
-			msgname, servertype)
+			msgname, moduletype)
 	}
 }
 

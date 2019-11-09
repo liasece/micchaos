@@ -58,7 +58,7 @@ func (this *InitManager) GetProgramModuleList() []module.IModule {
 				if i != 0 {
 					pid = fmt.Sprint(basepid, "_", i)
 				}
-				stype := util.GetServerIDType(pid)
+				stype := util.GetModuleIDType(pid)
 				log.Debug("App 初始化 ServerType[%s] ServerID[%s]", stype, pid)
 				switch stype {
 				case "gate":

@@ -15,7 +15,7 @@ func init() {
 	ToPlayer(&CS_EnterGame{})
 }
 
-func GetServerTypeByMsgName(msgname string) string {
+func GetModuleTypeByMsgName(msgname string) string {
 	return mapping[msgname]
 }
 

@@ -69,6 +69,6 @@ func (this *Player) AfterOnline(session session.Session) {
 
 func (this *Player) SendMsg(msg interface{}) {
 	btop := ccmd.GetSCTopLayer(msg)
-	this.mod.SendBytesToClient(this.Session.GetBindServer("gate"),
+	this.mod.SendBytesToClient(this.Session.GetBind("gate"),
 		this.Session.GetConnectID(), 0, btop)
 }
