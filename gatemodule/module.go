@@ -10,6 +10,7 @@ import (
 	"github.com/liasece/micserver/connect"
 	"github.com/liasece/micserver/module"
 	"github.com/liasece/micserver/msg"
+	"github.com/liasece/micserver/roc"
 	"github.com/liasece/micserver/util/monitor"
 )
 
@@ -97,7 +98,8 @@ func (this *GatewayModule) OnNewClient(client *connect.Client) {
 
 // 关闭客户端连接时触发
 func (this *GatewayModule) OnCloseClient(client *connect.Client) {
-	this.ROCCallNR("Player["+client.Session.GetUUID()+"].GateClose", nil)
+	this.ROCCallNR(roc.O(ccmd.ROCTypePlayer, client.Session.GetUUID()).F("GateClose"),
+		nil)
 }
 
 func (this *GatewayModule) OnAcceptClientConnect(conn net.Conn) {

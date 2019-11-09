@@ -28,7 +28,7 @@ func (this *PlayerModule) AfterInitModule() {
 	this.BaseModule.AfterInitModule()
 
 	// 初始化业务逻辑
-	this.BaseModule.ROCManager.NewObjectType("Player")
+	this.BaseModule.ROCManager.NewObjectType(ccmd.ROCTypePlayer)
 	// 事件处理器
 	this.HandlerClient.Init(this)
 	this.HandlerServer.Init(this)

@@ -1,6 +1,7 @@
 package manager
 
 import (
+	"ccmd"
 	"github.com/liasece/micserver/log"
 	"github.com/liasece/micserver/module"
 	"github.com/liasece/micserver/roc"
@@ -21,7 +22,7 @@ func (this *PlayerDocManager) Init(mod *module.BaseModule,
 	userinfos *mongodb.UserInfos) {
 	this.mod = mod
 	this.mongo_userinfos = userinfos
-	this.playerRoc = this.mod.ROCManager.GetROC("Player")
+	this.playerRoc = this.mod.ROCManager.GetROC(ccmd.ROCTypePlayer)
 }
 
 func (this *PlayerDocManager) getPlayerDoc(uuid string) *boxes.Player {

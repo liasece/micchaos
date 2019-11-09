@@ -29,12 +29,12 @@ func (this *Player) GetPrimaryKey() bson.M {
 	}
 }
 
-func (this *Player) GetObjID() string {
+func (this *Player) GetROCObjID() string {
 	return this.Account.UUID
 }
 
-func (this *Player) GetObjType() string {
-	return "Player"
+func (this *Player) GetROCObjType() roc.ROCObjType {
+	return ccmd.ROCTypePlayer
 }
 
 func (this *Player) ROCCall(path *roc.ROCPath, arg []byte) ([]byte, error) {
@@ -64,7 +64,7 @@ func (this *Player) AfterOnline(session session.Session) {
 	send := &ccmd.SC_ResEnterGame{}
 	this.SendMsg(send)
 
-	this.mod.ROCCallNR("Player["+this.UUID+"].Regdata", nil)
+	this.mod.ROCCallNR(roc.O(ccmd.ROCTypePlayer, this.UUID).F("Regdata"), nil)
 }
 
 func (this *Player) SendMsg(msg interface{}) {
