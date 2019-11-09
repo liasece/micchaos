@@ -99,7 +99,8 @@ func (this *GatewayModule) OnNewClient(client *connect.Client) {
 
 // 关闭客户端连接时触发
 func (this *GatewayModule) OnCloseClient(client *connect.Client) {
-	this.ROCCallNR(roc.O(ccmd.ROCTypePlayer, client.Session.GetUUID()).F("GateClose"),
+	this.ROCCallNR(
+		roc.O(ccmd.ROCTypePlayer, client.Session.GetUUID()).F("GateClose"),
 		nil)
 }
 
