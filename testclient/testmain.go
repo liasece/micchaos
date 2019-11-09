@@ -30,7 +30,7 @@ func run(ch chan struct{}, i int) {
 }
 
 func main() {
-	threadsum := 10
+	threadsum := 10000
 	stopchan := make(chan struct{}, threadsum)
 	for i := 0; i < threadsum; i++ {
 		go run(stopchan, i)
@@ -38,5 +38,5 @@ func main() {
 	for i := 0; i < threadsum; i++ {
 		<-stopchan
 	}
-	time.Sleep(time.Millisecond * 400)
+	time.Sleep(time.Millisecond * 10000)
 }

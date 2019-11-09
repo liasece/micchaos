@@ -36,7 +36,11 @@ func (this *CmdHandler) OnSC_ResAccountRigster(data []byte) {
 	json.Unmarshal(data, msg)
 
 	if msg.Code != 0 {
-		this.Error("注册账号失败 %s", string(data))
+		if msg.Message == "目标用户名已存在" {
+
+		} else {
+			this.Error("注册账号失败 %s", string(data))
+		}
 	} else {
 		this.Info("注册成功 %s", string(data))
 		if msg.Account.LoginName != "" {
@@ -62,4 +66,13 @@ func (this *CmdHandler) OnSC_ResAccountLogin(data []byte) {
 	this.Info("登陆成功 %s", string(data))
 	// 进入游戏
 	this.SendMsg(&ccmd.CS_EnterGame{})
+}
+
+// 加入场景成功
+func (this *CmdHandler) OnSC_ResEnterGame(data []byte) {
+	this.Info("测试通过")
+}
+
+// 服务器提示
+func (this *CmdHandler) OnSC_Tips(data []byte) {
 }
