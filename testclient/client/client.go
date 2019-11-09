@@ -21,7 +21,7 @@ func (this *Client) Init(name, passwd string) {
 	this.LoginName = name
 	this.Passwd = passwd
 	this.Logger = log.GetDefaultLogger().Clone()
-	this.Logger.SetLogLevel(log.INFO)
+	// this.Logger.SetLogLevel(log.INFO)
 	this.Logger.SetLogName("client")
 	this.CmdHandler.Init(this)
 }

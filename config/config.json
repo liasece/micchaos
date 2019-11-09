@@ -11,7 +11,8 @@
 			"msgthreadnum":12,
 			"database":"micworld",
 			"userinfos_collection":"userinfos",
-			"mongodb":"mongodb://127.0.0.1:27017"
+			"mongodb":"mongodb://127.0.0.1:27017",
+			"subnetnochan":true
 		},
 		"modules":{
 			"gate001":{
