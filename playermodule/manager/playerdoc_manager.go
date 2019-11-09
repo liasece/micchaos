@@ -22,7 +22,7 @@ func (this *PlayerDocManager) Init(mod *module.BaseModule,
 	userinfos *mongodb.UserInfos) {
 	this.mod = mod
 	this.mongo_userinfos = userinfos
-	this.playerRoc = this.mod.ROCManager.GetROC(ccmd.ROCTypePlayer)
+	this.playerRoc = this.mod.GetROC(ccmd.ROCTypePlayer)
 }
 
 func (this *PlayerDocManager) getPlayerDoc(uuid string) *boxes.Player {

@@ -45,7 +45,8 @@ func (this *GatewayModule) AfterInitModule() {
 	this.HookGate(this)
 
 	// 负载log
-	this.TimerManager.RegTimer(time.Second*1, 0, false, this.watchClientMsgLoadToLog)
+	this.TimerManager.RegTimer(time.Second*1, 0, false,
+		this.watchClientMsgLoadToLog)
 }
 
 // 当收到消息时调用

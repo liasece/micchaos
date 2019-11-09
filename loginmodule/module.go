@@ -29,7 +29,7 @@ func (this *LoginModule) AfterInitModule() {
 	this.HandlerServer.Init(this)
 
 	// 数据库初始化
-	mongouri := this.Configer.GetString(ccmd.ConfMongoDB)
+	mongouri := this.GetConfiger().GetString(ccmd.ConfMongoDB)
 	if mongouri != "" {
 		this.Debug("连接 MondgoDB[%s]", mongouri)
 		var err error

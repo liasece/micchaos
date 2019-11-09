@@ -28,13 +28,13 @@ func (this *PlayerModule) AfterInitModule() {
 	this.BaseModule.AfterInitModule()
 
 	// 初始化业务逻辑
-	this.BaseModule.ROCManager.NewObjectType(ccmd.ROCTypePlayer)
+	this.BaseModule.NewROC(ccmd.ROCTypePlayer)
 	// 事件处理器
 	this.HandlerClient.Init(this)
 	this.HandlerServer.Init(this)
 
 	// 数据库初始化
-	mongouri := this.Configer.GetString(ccmd.ConfMongoDB)
+	mongouri := this.GetConfiger().GetString(ccmd.ConfMongoDB)
 	if mongouri != "" {
 		this.Debug("连接 MondgoDB[%s]", mongouri)
 		var err error
