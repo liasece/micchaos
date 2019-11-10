@@ -69,7 +69,7 @@ func (this *GatewayModule) OnRecvClientMsg(
 	moduleid := conn.GetBind(moduletype)
 	if moduleid == "" {
 		// 获取一个负载均衡的服务器ID
-		moduleid = this.GetBalanceServerID(moduletype)
+		moduleid = this.GetBalanceModuleID(moduletype)
 		if moduleid != "" {
 			conn.SetBind(moduletype, moduleid)
 		}
