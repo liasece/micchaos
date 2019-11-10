@@ -75,9 +75,9 @@ func (this *GatewayModule) OnRecvClientMsg(
 		}
 	}
 	if moduleid != "" {
-		this.ForwardClientMsgToServer(conn, moduleid, 0, msgbin.ProtoData)
+		this.ForwardClientMsgToModule(conn, moduleid, 0, msgbin.ProtoData)
 	} else {
-		this.Error("找不到合适的目标服务器 MsgName[%s] ServerType[%s]",
+		this.Error("找不到合适的目标服务器 MsgName[%s] ModuleType[%s]",
 			msgname, moduletype)
 	}
 }

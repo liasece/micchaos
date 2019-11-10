@@ -12,8 +12,8 @@ func (this *HandlerServer) Init(mod *LoginModule) {
 	this.LoginModule = mod
 }
 
-func (this *HandlerServer) OnServerMessage(smsg *servercomm.ServerMessage) {
-	this.Info("[HandlerServer.OnServerMessage] 收到 Server 消息 %d", smsg.MsgID)
+func (this *HandlerServer) OnModuleMessage(smsg *servercomm.ModuleMessage) {
+	this.Info("[HandlerServer.OnModuleMessage] 收到 Module 消息 %d", smsg.MsgID)
 }
 
 func (this *HandlerServer) OnClientMessage(smsg *servercomm.ClientMessage) {

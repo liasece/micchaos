@@ -170,7 +170,7 @@ func (this *HandlerClient) OnCS_AccountLogin(
 				tmpplayer.Account.PassWordMD5WS,
 				tmpplayer.Account.PassWordMD5WSSalt)
 			session.SetUUID(tmpplayer.Account.UUID)
-			session.SyncToServer(&this.BaseModule, session.GetBind("gate"))
+			session.SyncToModule(&this.BaseModule, session.GetBind("gate"))
 			send := &ccmd.SC_ResAccountLogin{
 				Code:      0,
 				Message:   "login secess",
