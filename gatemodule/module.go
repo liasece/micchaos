@@ -16,14 +16,13 @@ import (
 
 type GatewayModule struct {
 	module.BaseModule
+
 	testSeqTimes    int64
 	testCheckTimeNS int64
 	testSwitch      bool
-
 	// 模块的负载
-	ClientMsgLoad          monitor.Load
+	clientMsgLoad          monitor.Load
 	lastCheckClientMsgLoad int64
-
 	// websocket 协议
 	ws WebSocket
 }
@@ -45,7 +44,7 @@ func (this *GatewayModule) AfterInitModule() {
 	this.HookGate(this)
 
 	// 负载log
-	this.TimerManager.RegTimer(time.Second*1, 0, false,
+	this.RegTimer(time.Second*1, 0, false,
 		this.watchClientMsgLoadToLog)
 }
 
@@ -57,7 +56,7 @@ func (this *GatewayModule) OnRecvClientMsg(
 	json.Unmarshal(msgbin.ProtoData, top)
 	this.Debug("收到TCP消息 MsgName[%s]", top.MsgName)
 
-	this.ClientMsgLoad.AddLoad(1)
+	this.clientMsgLoad.AddLoad(1)
 
 	msgname := top.MsgName
 	moduletype := ccmd.GetModuleTypeByMsgName(msgname)
@@ -108,7 +107,7 @@ func (this *GatewayModule) OnAcceptClientConnect(conn net.Conn) {
 }
 
 func (this *GatewayModule) watchClientMsgLoadToLog(dt time.Duration) bool {
-	load := this.ClientMsgLoad.GetLoad()
+	load := this.clientMsgLoad.GetLoad()
 	incValue := load - this.lastCheckClientMsgLoad
 	if incValue > 0 {
 		this.Info("[GatewayModule.watchClientMsgLoadToLog] Within %d sec load:[%d]",
