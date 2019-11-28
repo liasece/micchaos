@@ -30,7 +30,7 @@ func run(ch chan struct{}, i int) {
 }
 
 func main() {
-	threadsum := 1000
+	threadsum := 100
 	stopchan := make(chan struct{}, threadsum)
 	for i := 0; i < threadsum; i++ {
 		go run(stopchan, i)

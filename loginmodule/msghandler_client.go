@@ -20,7 +20,7 @@ type TmpPlayer struct {
 
 type HandlerClient struct {
 	*LoginModule
-	mappingFunc map[string]func(session session.Session, data []byte)
+	mappingFunc map[string]func(session *session.Session, data []byte)
 
 	// 模块的负载
 	ClientMsgLoad          monitor.Load
@@ -29,7 +29,7 @@ type HandlerClient struct {
 
 func (this *HandlerClient) Init(mod *LoginModule) {
 	this.LoginModule = mod
-	this.mappingFunc = make(map[string]func(session session.Session, data []byte))
+	this.mappingFunc = make(map[string]func(session *session.Session, data []byte))
 	// 创建消息处理消息的映射
 	hf := reflect.ValueOf(this)
 	hft := hf.Type()
@@ -42,13 +42,14 @@ func (this *HandlerClient) Init(mod *LoginModule) {
 		// 计算方法名对应的消息名
 		msgName := "ccmd." + funcName[2:]
 		this.mappingFunc[msgName] =
-			hf.Method(i).Interface().(func(session session.Session, data []byte))
+			hf.Method(i).Interface().(func(session *session.Session, data []byte))
 	}
 
 	this.TimerManager.RegTimer(time.Second*1, 0, false, this.watchClientMsgLoadToLog)
 }
 
-func (this *HandlerClient) OnClientMessage(smsg *servercomm.ClientMessage) {
+func (this *HandlerClient) OnClientMessage(session *session.Session,
+	smsg *servercomm.ClientMessage) {
 	top := &ccmd.CS_TopLayer{}
 	json.Unmarshal(smsg.Data, top)
 
@@ -58,18 +59,15 @@ func (this *HandlerClient) OnClientMessage(smsg *servercomm.ClientMessage) {
 
 	this.ClientMsgLoad.AddLoad(1)
 
-	se := session.Session{}
-	se.FromMap(smsg.Session)
-
 	// 从消息处理映射集合找到对应的处理函数并且执行
 	if f, ok := this.mappingFunc[top.MsgName]; ok {
-		f(se, top.Data)
+		f(session, top.Data)
 	}
 }
 
 // 注册账号
 func (this *HandlerClient) OnCS_AccountRegister(
-	session session.Session, data []byte) {
+	session *session.Session, data []byte) {
 	msg := &ccmd.CS_AccountRegister{}
 	json.Unmarshal(data, msg)
 	this.Debug("玩家请求注册 %s", string(data))
@@ -133,7 +131,7 @@ func (this *HandlerClient) OnCS_AccountRegister(
 
 // 玩家登陆
 func (this *HandlerClient) OnCS_AccountLogin(
-	session session.Session, data []byte) {
+	session *session.Session, data []byte) {
 	msg := &ccmd.CS_AccountLogin{}
 	json.Unmarshal(data, msg)
 	tmpplayer := &TmpPlayer{}

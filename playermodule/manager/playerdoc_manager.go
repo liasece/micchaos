@@ -40,7 +40,7 @@ func (this *PlayerDocManager) GetPlayerDoc(uuid string) *boxes.Player {
 
 func (this *PlayerDocManager) loadOrStore(
 	uuid string, p *boxes.Player) *boxes.Player {
-	if vi, isLoad := this.playerRoc.GetOrRegBoj(uuid, p); !isLoad {
+	if vi, isLoad := this.playerRoc.GetOrRegObj(uuid, p); !isLoad {
 		if p, ok := vi.(*boxes.Player); ok {
 			this.Info("mod.ROCManager.RegObj OK")
 			return p

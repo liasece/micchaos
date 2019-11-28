@@ -14,8 +14,8 @@ type Player struct {
 	Account `json:"account"`
 	*log.Logger
 
-	Session session.Session `json:"-"`
-	Name    string          `json:"name"`
+	Session *session.Session `json:"-"`
+	Name    string           `json:"name"`
 }
 
 func (this *Player) Init(mod *module.BaseModule) {
@@ -56,7 +56,7 @@ func (this *Player) AfterLoad() {
 	this.Logger.SetTopic("Player[" + this.UUID + "]")
 }
 
-func (this *Player) AfterOnline(session session.Session) {
+func (this *Player) AfterOnline(session *session.Session) {
 	this.Info("登陆成功 %s", this.UUID)
 	// Initial connect session
 	this.Session = session
@@ -69,5 +69,5 @@ func (this *Player) AfterOnline(session session.Session) {
 
 func (this *Player) SendMsg(msg interface{}) {
 	btop := ccmd.GetSCTopLayer(msg)
-	this.Session.SendMsg(this.mod, 0, btop)
+	this.Session.SendMsg(this.mod, "gate", 0, btop)
 }
