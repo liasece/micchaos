@@ -64,7 +64,8 @@ func (this *Player) AfterOnline(session *session.Session) {
 	send := &ccmd.SC_ResEnterGame{}
 	this.SendMsg(send)
 
-	this.mod.ROCCallNR(roc.O(ccmd.ROCTypePlayer, this.UUID).F("Regdata"), nil)
+	this.mod.ROCCallNR(roc.O(ccmd.ROCTypePlayer, this.UUID).F("Regdata"),
+		[]byte{12, 43, 78, 222, 96})
 }
 
 func (this *Player) SendMsg(msg interface{}) {
