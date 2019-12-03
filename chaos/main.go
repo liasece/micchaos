@@ -7,17 +7,17 @@ import (
 )
 
 func main() {
-	// 初始化性能监控
-	monitor.BindPprof("", 8888)
-
 	// 初始化 MicServer
-	app, err := micserver.CreateApp(GetInitManger().GetConfigPath(),
-		GetInitManger().GetProgramModuleList())
+	app, err := micserver.SetupApp(GetInitManger().GetConfigPath())
 	if err != nil {
 		log.Fatal("Create app fatal: %v", err)
 		return
 	}
 
+	log.Info("即将运行")
+	// 初始化性能监控
+	monitor.BindPprof("", 8888)
+
 	// app 开始运行 阻塞
-	app.RunAndBlock()
+	app.RunAndBlock(GetInitManger().GetProgramModuleList())
 }

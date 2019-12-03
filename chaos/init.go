@@ -43,11 +43,6 @@ func (this *InitManager) GetProgramModuleList() []module.IModule {
 		this.modules = make(map[string]module.IModule)
 		config := conf.TopConfig{}
 		config.InitParse()
-		logpath := config.GetProp("logpath")
-		if logpath != "" {
-			log.GetDefaultLogger().GetLogWriter().AddLogFile(
-				logpath, true)
-		}
 		isDevelopment := true
 
 		// 遍历所有的参数指定的模块名
