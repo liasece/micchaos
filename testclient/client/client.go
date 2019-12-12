@@ -26,7 +26,7 @@ func (this *Client) Init(name, passwd string) {
 	this.CmdHandler.Init(this)
 }
 
-func (this *Client) OnRecvMessage(client *connect.Client,
+func (this *Client) OnRecvConnectMessage(client *connect.Client,
 	msgbinary *msg.MessageBinary) {
 	topmsg := &ccmd.SC_TopLayer{}
 	json.Unmarshal(msgbinary.ProtoData, topmsg)
@@ -38,7 +38,7 @@ func (this *Client) OnRecvMessage(client *connect.Client,
 	}
 }
 
-func (this *Client) OnClose(client *connect.Client) {
+func (this *Client) OnConnectClose(client *connect.Client) {
 	this.Debug("连接关闭")
 }
 

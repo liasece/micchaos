@@ -1,19 +1,19 @@
 package playermodule
 
 import (
+	"ccmd"
 	"fmt"
 	"mongodb"
-
-	"ccmd"
-	"github.com/liasece/micserver/module"
 	"playermodule/manager"
+
+	"github.com/liasece/micserver/module"
 )
 
 type PlayerModule struct {
 	module.BaseModule
 
 	PlayerDocManager manager.PlayerDocManager
-	mongo_userinfos  *mongodb.UserInfos
+	mongoUserinfos   *mongodb.UserInfos
 	HandlerClient    HandlerClient
 	HandlerServer    HandlerServer
 }
@@ -40,7 +40,7 @@ func (this *PlayerModule) AfterInitModule() {
 		var err error
 
 		// 初始化玩家数据表
-		this.mongo_userinfos, err = mongodb.NewUserInfos(this, mongouri)
+		this.mongoUserinfos, err = mongodb.NewUserInfos(this, mongouri)
 		if err != nil {
 			this.Error("mongodb.NewUserInfos err: %s", err.Error())
 			panic(fmt.Sprintf("mongodb.NewUserInfos err: %s", err.Error()))
@@ -49,7 +49,7 @@ func (this *PlayerModule) AfterInitModule() {
 		}
 	}
 
-	this.PlayerDocManager.Init(&this.BaseModule, this.mongo_userinfos)
+	this.PlayerDocManager.Init(&this.BaseModule, this.mongoUserinfos)
 	this.PlayerDocManager.Logger = this.Logger
 
 	this.HookServer(&this.HandlerServer)

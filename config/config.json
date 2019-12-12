@@ -12,7 +12,8 @@
 			"database":"micworld",
 			"userinfos_collection":"userinfos",
 			"mongodb":"mongodb://127.0.0.1:27017",
-			"subnetnochan":true
+			"subnetnochan":true,
+			"loglevel":"sys"
 		},
 		"modules":{
 			"gate001":{

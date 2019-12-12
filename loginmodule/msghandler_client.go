@@ -10,7 +10,6 @@ import (
 	"github.com/liasece/micserver/session"
 	"github.com/liasece/micserver/util/math"
 	"github.com/liasece/micserver/util/monitor"
-	"github.com/liasece/micserver/util/uid"
 	"playermodule/boxes"
 )
 
@@ -71,7 +70,7 @@ func (this *HandlerClient) OnCS_AccountRegister(
 	msg := &ccmd.CS_AccountRegister{}
 	json.Unmarshal(data, msg)
 	this.Debug("玩家请求注册 %s", string(data))
-	tmpuuid, err := uid.NewUniqueID(101)
+	tmpuuid, err := this.GenUniqueID()
 	if err != nil {
 		this.Error("UUID构建错误 %s", err.Error())
 		return

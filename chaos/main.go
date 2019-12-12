@@ -1,6 +1,8 @@
 package main
 
 import (
+	"time"
+
 	"github.com/liasece/micserver"
 	"github.com/liasece/micserver/log"
 	"github.com/liasece/micserver/util/monitor"
@@ -11,6 +13,7 @@ func main() {
 	app, err := micserver.SetupApp(GetInitManger().GetConfigPath())
 	if err != nil {
 		log.Fatal("Create app fatal: %v", err)
+		time.Sleep(time.Second * 1)
 		return
 	}
 
