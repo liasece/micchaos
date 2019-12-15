@@ -37,7 +37,7 @@ func (this *Player) GetROCObjType() roc.ROCObjType {
 	return ccmd.ROCTypePlayer
 }
 
-func (this *Player) ROCCall(path *roc.ROCPath, arg []byte) ([]byte, error) {
+func (this *Player) OnROCCall(path *roc.ROCPath, arg []byte) ([]byte, error) {
 	this.Info("ROC调用执行:[%s],%+v", path.String(), arg)
 	switch path.Move() {
 	case "GateClose":
