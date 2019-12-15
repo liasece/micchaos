@@ -4,9 +4,12 @@ import (
 	"ccmd"
 	"fmt"
 	"mongodb"
-	"playermodule/manager"
+	"time"
 
 	"github.com/liasece/micserver/module"
+	"github.com/liasece/micserver/roc"
+	"github.com/liasece/micserver/rocutil"
+	"playermodule/manager"
 )
 
 type PlayerModule struct {
@@ -53,4 +56,19 @@ func (this *PlayerModule) AfterInitModule() {
 	this.PlayerDocManager.Logger = this.Logger
 
 	this.HookServer(&this.HandlerServer)
+
+	this.RegTimer(time.Millisecond*100, 0, true, this.TestROCUtil)
+}
+
+func (this *PlayerModule) TestROCUtil(td time.Duration) bool {
+	type ROCUtilTest struct {
+		Str     string
+		Int     int
+		Float32 float32
+	}
+	rocutil.CallNR(this, roc.ROCObjType("gatemodule"), "gate001", "ShowInfo",
+		fmt.Sprint("test time:", time.Now().String()), ROCUtilTest{
+			"test", 666, 3.14,
+		})
+	return true
 }
