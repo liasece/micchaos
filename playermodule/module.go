@@ -70,5 +70,5 @@ func (this *PlayerModule) TestROCUtil(td time.Duration) bool {
 		fmt.Sprint("test time:", time.Now().String()), ROCUtilTest{
 			"test", 666, 3.14,
 		})
-	return true
+	return false
 }

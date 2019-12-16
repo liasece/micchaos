@@ -46,16 +46,17 @@ func (this *GatewayModule) AfterInitModule() {
 	this.HookGate(this)
 
 	// 初始化本地ROC对象
-	_, err := rocutil.ServerROCObj(this, this, &options.Options{
-		CheckFuncName: func(name string) (string, bool) {
-			if name[:4] != "ROC_" {
-				return "", false
-			}
-			name = name[4:]
-			this.Info("ROC注册调用函数:%s", name)
-			return name, true
-		},
-	})
+	_, err := rocutil.ServerROCObj(this, this, roc.ROCObjType("gatemodule"),
+		this.GetModuleID(), &options.Options{
+			CheckFuncName: func(name string) (string, bool) {
+				if name[:4] != "ROC_" {
+					return "", false
+				}
+				name = name[4:]
+				this.Info("ROC注册调用函数:%s", name)
+				return name, true
+			},
+		})
 	if err != nil {
 		this.Error("rocutil.ServerROCObj Err[%s]", err.Error())
 	}
@@ -132,14 +133,6 @@ func (this *GatewayModule) watchClientMsgLoadToLog(dt time.Duration) bool {
 	}
 	this.lastCheckClientMsgLoad = load
 	return true
-}
-
-func (this *GatewayModule) GetROCObjType() roc.ROCObjType {
-	return roc.ROCObjType("gatemodule")
-}
-
-func (this *GatewayModule) GetROCObjID() string {
-	return this.GetModuleID()
 }
 
 type ROCUtilTest struct {
