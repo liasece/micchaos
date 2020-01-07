@@ -27,60 +27,6 @@
 					"msgthreadnum":10
 				}
 			},
-			"//gate002":{
-				"settings":{
-					"subnettcpaddr":":12001",
-					"gatetcpaddr":":12002"
-				}
-			},
-			"//gate003":{
-				"settings":{
-					"subnettcpaddr":":13001",
-					"gatetcpaddr":":13002"
-				}
-			},
-			"//gate004":{
-				"settings":{
-					"subnettcpaddr":":14001",
-					"gatetcpaddr":":14002"
-				}
-			},
-			"//gate005":{
-				"settings":{
-					"subnettcpaddr":":15001",
-					"gatetcpaddr":":15002"
-				}
-			},
-			"//gate006":{
-				"settings":{
-					"subnettcpaddr":":16001",
-					"gatetcpaddr":":16002"
-				}
-			},
-			"//gate007":{
-				"settings":{
-					"subnettcpaddr":":17001",
-					"gatetcpaddr":":17002"
-				}
-			},
-			"//gate008":{
-				"settings":{
-					"subnettcpaddr":":18001",
-					"gatetcpaddr":":18002"
-				}
-			},
-			"//gate009":{
-				"settings":{
-					"subnettcpaddr":":19001",
-					"gatetcpaddr":":19002"
-				}
-			},
-			"//gate010":{
-				"settings":{
-					"subnettcpaddr":":20001",
-					"gatetcpaddr":":20002"
-				}
-			},
 			"player001":{
 				"settings":{
 					"subnettcpaddr":":13001",
