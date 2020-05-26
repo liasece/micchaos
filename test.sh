@@ -1,3 +1,3 @@
 #!/bin/bash
-../bin/chaos -p gate001,player001,login001
+bin/chaos -p gate001,player001,login001
 
