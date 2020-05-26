@@ -3,7 +3,7 @@ package mongodb
 import (
 	"fmt"
 
-	"ccmd"
+	"github.com/liasece/micchaos/ccmd"
 	"github.com/liasece/micserver/module"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"

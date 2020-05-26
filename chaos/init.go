@@ -6,9 +6,9 @@ import (
 	"path/filepath"
 	"sync"
 
-	"gatemodule"
-	"loginmodule"
-	"playermodule"
+	"github.com/liasece/micchaos/gatemodule"
+	"github.com/liasece/micchaos/loginmodule"
+	"github.com/liasece/micchaos/playermodule"
 
 	"github.com/liasece/micserver/conf"
 	"github.com/liasece/micserver/log"

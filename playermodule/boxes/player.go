@@ -1,7 +1,7 @@
 package boxes
 
 import (
-	"ccmd"
+	"github.com/liasece/micchaos/ccmd"
 	"github.com/liasece/micserver/log"
 	"github.com/liasece/micserver/module"
 	"github.com/liasece/micserver/roc"
@@ -33,11 +33,11 @@ func (this *Player) GetROCObjID() string {
 	return this.Account.UUID
 }
 
-func (this *Player) GetROCObjType() roc.ROCObjType {
+func (this *Player) GetROCObjType() roc.ObjType {
 	return ccmd.ROCTypePlayer
 }
 
-func (this *Player) OnROCCall(path *roc.ROCPath, arg []byte) ([]byte, error) {
+func (this *Player) OnROCCall(path *roc.Path, arg []byte) ([]byte, error) {
 	this.Info("ROC调用执行:[%s],%+v", path.String(), arg)
 	switch path.Move() {
 	case "GateClose":

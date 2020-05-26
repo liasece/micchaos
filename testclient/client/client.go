@@ -1,8 +1,9 @@
 package client
 
 import (
-	"ccmd"
 	"encoding/json"
+
+	"github.com/liasece/micchaos/ccmd"
 	"github.com/liasece/micserver/connect"
 	"github.com/liasece/micserver/log"
 	"github.com/liasece/micserver/msg"

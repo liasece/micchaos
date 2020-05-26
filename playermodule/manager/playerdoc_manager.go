@@ -1,13 +1,13 @@
 package manager
 
 import (
-	"ccmd"
+	"github.com/liasece/micchaos/ccmd"
+	"github.com/liasece/micchaos/mongodb"
+	"github.com/liasece/micchaos/playermodule/boxes"
 	"github.com/liasece/micserver/log"
 	"github.com/liasece/micserver/module"
 	"github.com/liasece/micserver/roc"
 	"go.mongodb.org/mongo-driver/bson"
-	"mongodb"
-	"playermodule/boxes"
 )
 
 type PlayerDocManager struct {

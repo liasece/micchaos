@@ -1,9 +1,10 @@
 package client
 
 import (
-	"ccmd"
 	"encoding/json"
 	"reflect"
+
+	"github.com/liasece/micchaos/ccmd"
 )
 
 type CmdHandler struct {

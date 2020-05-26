@@ -1,7 +1,7 @@
 package boxes
 
 import (
-	"ccmd"
+	"github.com/liasece/micchaos/ccmd"
 )
 
 type Account struct {

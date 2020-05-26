@@ -12,5 +12,5 @@ var (
 )
 
 var (
-	ROCTypePlayer roc.ROCObjType = "Player"
+	ROCTypePlayer roc.ObjType = "Player"
 )

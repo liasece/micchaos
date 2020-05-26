@@ -1,11 +1,12 @@
 package gatemodule
 
 import (
-	"ccmd"
 	"encoding/json"
 	"net"
 	"strings"
 	"time"
+
+	"github.com/liasece/micchaos/ccmd"
 
 	"github.com/liasece/micserver/connect"
 	"github.com/liasece/micserver/module"
@@ -46,7 +47,7 @@ func (this *GatewayModule) AfterInitModule() {
 	this.HookGate(this)
 
 	// 初始化本地ROC对象
-	_, err := rocutil.ServerROCObj(this, this, roc.ROCObjType("gatemodule"),
+	_, err := rocutil.ServerROCObj(this, this, roc.ObjType("gatemodule"),
 		this.GetModuleID(), &options.Options{
 			CheckFuncName: func(name string) (string, bool) {
 				if name[:4] != "ROC_" {
@@ -62,7 +63,7 @@ func (this *GatewayModule) AfterInitModule() {
 	}
 
 	// 负载log
-	this.RegTimer(time.Second*1, 0, false,
+	this.TimerManager.RegTimer(time.Second*1, 0, false,
 		this.watchClientMsgLoadToLog)
 }
 

@@ -2,9 +2,10 @@ package loginmodule
 
 import (
 	"fmt"
-	"mongodb"
 
-	"ccmd"
+	"github.com/liasece/micchaos/ccmd"
+	"github.com/liasece/micchaos/mongodb"
+
 	"github.com/liasece/micserver/module"
 )
 

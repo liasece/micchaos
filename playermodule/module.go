@@ -1,15 +1,16 @@
 package playermodule
 
 import (
-	"ccmd"
 	"fmt"
-	"mongodb"
 	"time"
 
+	"github.com/liasece/micchaos/ccmd"
+	"github.com/liasece/micchaos/mongodb"
+
+	"github.com/liasece/micchaos/playermodule/manager"
 	"github.com/liasece/micserver/module"
 	"github.com/liasece/micserver/roc"
 	"github.com/liasece/micserver/rocutil"
-	"playermodule/manager"
 )
 
 type PlayerModule struct {
@@ -57,7 +58,7 @@ func (this *PlayerModule) AfterInitModule() {
 
 	this.HookServer(&this.HandlerServer)
 
-	this.RegTimer(time.Millisecond*100, 0, true, this.TestROCUtil)
+	this.TimerManager.RegTimer(time.Millisecond*100, 0, true, this.TestROCUtil)
 }
 
 func (this *PlayerModule) TestROCUtil(td time.Duration) bool {
@@ -66,7 +67,7 @@ func (this *PlayerModule) TestROCUtil(td time.Duration) bool {
 		Int     int
 		Float32 float32
 	}
-	rocutil.CallNR(this, roc.ROCObjType("gatemodule"), "gate001", "ShowInfo",
+	rocutil.CallNR(this, roc.ObjType("gatemodule"), "gate001", "ShowInfo",
 		fmt.Sprint("test time:", time.Now().String()), ROCUtilTest{
 			"test", 666, 3.14,
 		})

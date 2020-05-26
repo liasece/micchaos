@@ -1,10 +1,11 @@
 package main
 
 import (
-	"ccmd"
 	"fmt"
-	"testclient/client"
 	"time"
+
+	"github.com/liasece/micchaos/ccmd"
+	"github.com/liasece/micchaos/testclient/client"
 )
 
 func run(ch chan struct{}, i int) {
