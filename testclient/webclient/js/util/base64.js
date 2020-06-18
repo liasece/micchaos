@@ -26,9 +26,12 @@ var Base64 = {
 			} else if (isNaN(chr3)) {
 				enc4 = 64;
 			}
-			output = output +
-				this._keyStr.charAt(enc1) + this._keyStr.charAt(enc2) +
-				this._keyStr.charAt(enc3) + this._keyStr.charAt(enc4);
+			output =
+				output +
+				this._keyStr.charAt(enc1) +
+				this._keyStr.charAt(enc2) +
+				this._keyStr.charAt(enc3) +
+				this._keyStr.charAt(enc4);
 		}
 		return output;
 	},
@@ -66,7 +69,7 @@ var Base64 = {
 			var c = string.charCodeAt(n);
 			if (c < 128) {
 				utftext += String.fromCharCode(c);
-			} else if ((c > 127) && (c < 2048)) {
+			} else if (c > 127 && c < 2048) {
 				utftext += String.fromCharCode((c >> 6) | 192);
 				utftext += String.fromCharCode((c & 63) | 128);
 			} else {
@@ -89,17 +92,19 @@ var Base64 = {
 			if (c < 128) {
 				string += String.fromCharCode(c);
 				i++;
-			} else if ((c > 191) && (c < 224)) {
+			} else if (c > 191 && c < 224) {
 				c2 = utftext.charCodeAt(i + 1);
 				string += String.fromCharCode(((c & 31) << 6) | (c2 & 63));
 				i += 2;
 			} else {
 				c2 = utftext.charCodeAt(i + 1);
 				c3 = utftext.charCodeAt(i + 2);
-				string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
+				string += String.fromCharCode(
+					((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63)
+				);
 				i += 3;
 			}
 		}
 		return string;
-	}
-}
+	},
+};

@@ -8,7 +8,9 @@ var Client = {
 		res._dataArray = new ArrayBuffer(0);
 		res._onmessage = function (evt) {
 			var oldBuffer = res._dataArray;
-			res._dataArray = new ArrayBuffer(oldBuffer.byteLength + evt.data.byteLength);
+			res._dataArray = new ArrayBuffer(
+				oldBuffer.byteLength + evt.data.byteLength
+			);
 			var totalBufferView = new Uint8Array(res._dataArray);
 			var oldBufferView = new Uint8Array(oldBuffer);
 			var newBufferView = new Uint8Array(evt.data);
@@ -17,7 +19,7 @@ var Client = {
 			while (true) {
 				if (res._inmsg === false) {
 					if (res._dataArray.byteLength < 6) {
-						break
+						break;
 					}
 					res._inmsg = true;
 					var dataview = new DataView(res._dataArray.slice(0, 6));
@@ -25,26 +27,33 @@ var Client = {
 					res._msgid = dataview.getUint16(4);
 				} else {
 					if (res._dataArray.byteLength >= res._totalSize) {
-						var data = convertArrayToString(res._dataArray.slice(6, res._totalSize));
+						var data = convertArrayToString(
+							res._dataArray.slice(6, res._totalSize)
+						);
 						var topobj = JSON.parse(data);
 						res._dataArray = res._dataArray.slice(res._totalSize);
 						res._inmsg = false;
 						if (res._handler.onmessage != null) {
-							res._handler.onmessage(topobj.MsgName, JSON.parse(Base64.decode(topobj.Data)));
+							res._handler.onmessage(
+								topobj.MsgName,
+								JSON.parse(Base64.decode(topobj.Data))
+							);
 						}
 					} else {
-						break
+						break;
 					}
 				}
 			}
 		};
 		res.send = function (topic, obj) {
 			var toplayer = {
-				"MsgName": topic,
-				"Data": Base64.encode(JSON.stringify(obj))
+				MsgName: topic,
+				Data: Base64.encode(JSON.stringify(obj)),
 			};
 			console.log(obj);
-			var byteArray = new Uint8Array(convertStringToArray(JSON.stringify(toplayer)));
+			var byteArray = new Uint8Array(
+				convertStringToArray(JSON.stringify(toplayer))
+			);
 			var buffer = new ArrayBuffer(4 + 2 + byteArray.byteLength);
 			var dataview = new DataView(buffer);
 			dataview.setUint32(0, 4 + 2 + byteArray.byteLength);
@@ -74,5 +83,5 @@ var Client = {
 			};
 		};
 		return res;
-	}
+	},
 };
