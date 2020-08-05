@@ -42,7 +42,7 @@ func (this *InitManager) GetProgramModuleList() []module.IModule {
 		this.hasInit = true
 		this.modules = make(map[string]module.IModule)
 		config := conf.TopConfig{}
-		config.InitParse()
+		config.InitFlag()
 		isDevelopment := true
 
 		// 遍历所有的参数指定的模块名
