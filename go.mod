@@ -8,5 +8,6 @@ require (
 	github.com/gobwas/ws v1.0.3
 	github.com/liasece/micserver v0.1.3
 	github.com/mailru/easyjson v0.7.1
-	go.mongodb.org/mongo-driver v1.3.3
+	go.mongodb.org/mongo-driver v1.5.1
+	golang.org/x/lint v0.0.0-20210508222113-6edffad5e616 // indirect
 )
